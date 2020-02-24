@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	if (check_for_flag(argc, argv, "--help") || check_for_flag(argc, argv, "-help")) {
-		std::cout << "IceFM Usage:\n";
+		std::cout << "Sfm Usage:\n";
 		std::cout << "	--help -help      Displays help options\n";
 		std::cout << "	-a                Unhides files starting with a \".\"\n";
 		std::cout << "	-s                Shows symlinks\n";
