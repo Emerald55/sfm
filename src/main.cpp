@@ -1,0 +1,455 @@
+#include <ncurses.h>
+#include <iostream>
+#include <vector>
+#include <filesystem>
+#include <unistd.h>
+#include <algorithm>
+#include <cstdlib>
+#include <sys/wait.h>
+#include "user_interface.h"
+#include "file_io.h"
+
+bool check_for_flag(int argc, char* argv[], std::string flag) {
+	for (int i = 0; i < argc; i++) {
+		if (flag == std::string(argv[i])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+inline int round_to(const int num, const int multiple) {
+	if (multiple == 0) { return num; }
+	int remainder = num % multiple;
+	if (remainder == 0) { return num; }
+	return num + multiple - remainder;
+}
+
+void user_interface::draw_window(const std::string &path, std::vector<std::string> files, WINDOW *win, 
+		std::vector<std::string> file_contents, int argc, char* argv[], bool draw_curs = false) {
+	if (file_contents.empty()) { //draw filenames
+		for (size_t i = 0; i < files.size(); i++) {
+			std::string file = file_io::path_to_filename(files[i]);
+			std::string num_format = std::to_string(i + page - scr_y + 3) + ".";
+			if (!draw_curs) {
+				num_format = std::to_string(i + 1) + ".";
+			}
+			wattron(win, COLOR_PAIR(3));
+			mvwaddstr(win, i + 1, 1, num_format.c_str());
+			wattroff(win, COLOR_PAIR(3));
+			if (std::filesystem::is_directory(files[i])) {
+				wattron(win, COLOR_PAIR(2));
+			}
+			if (i == (unsigned)curs_y && draw_curs) { //highlight file where cursor is
+				wattron(win, COLOR_PAIR(1));
+			}
+			if (std::filesystem::is_symlink(files[i]) && check_for_flag(argc, argv, "-s")) {
+				file += " -> ";
+				file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
+			}
+			const unsigned int current_scr_size = draw_selected_path ? scr_x / 2 - 2 : scr_x;
+			if (num_format.size() + 1 + file.size() > current_scr_size) {
+				file = file.substr(0, current_scr_size - num_format.size() - 1);
+			}
+			mvwaddstr(win, i + 1, 2 + num_format.size(), file.c_str());
+			wattroff(win, COLOR_PAIR(1));
+			wattroff(win, COLOR_PAIR(2));
+		}
+	}
+	else { //draw file contents
+		for (size_t i = 0; i < file_contents.size(); i++) {
+			if (file_contents[i].size() > scr_x / 2 - 2) {
+				file_contents[i] = file_contents[i].substr(0, scr_x / 2 - 2); //remove off-screen lines
+			}
+			if (i > term_height - 1) { break; }
+			mvwaddstr(win, i + 1, 1, file_contents[i].c_str());
+		}
+	}
+	box(win, 0, 0);
+	draw_window_title(path, win);
+}
+
+int main(int argc, char *argv[]) {
+	for (int i = 0; i < argc; i++) {
+		if (std::string(argv[i]) == "-p") {
+			errno = chdir(argv[i + 1]);
+			if (errno == -1) {
+				std::cout << "Could Not Find And/Or Enter Directory, Exiting...\n";
+				return 0;
+			}
+			break;
+		}
+	}
+	if (check_for_flag(argc, argv, "--help") || check_for_flag(argc, argv, "-help")) {
+		std::cout << "IceFM Usage:\n";
+		std::cout << "	--help -help      Displays help options\n";
+		std::cout << "	-a                Unhides files starting with a \".\"\n";
+		std::cout << "	-s                Shows symlinks\n";
+		std::cout << "	-p /start/path    Path to start program from\n";
+	}
+	else {
+		initscr();
+		start_color();
+		init_pair(1, COLOR_WHITE, COLOR_RED); //cursor
+		init_pair(2, COLOR_YELLOW, COLOR_BLACK); //directories
+		init_pair(3, COLOR_CYAN, COLOR_BLACK); //line numbers
+		init_pair(4, COLOR_GREEN, COLOR_BLACK); //green input box
+		init_pair(5, COLOR_RED, COLOR_BLACK); //red input box
+		init_pair(6, COLOR_BLACK, COLOR_GREEN); //help menu
+		cbreak();
+		noecho();
+		curs_set(0);
+		keypad(stdscr, true);
+		int update_speed = 100;
+		timeout(update_speed);
+		user_interface ui;
+		user_interface *ui_ptr = &ui;
+		WINDOW *current_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, 0);
+		WINDOW *selected_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, ui.scr_x / 2);
+		std::vector<std::string> file_content;
+		std::string search_str;
+		std::string copy_path;
+		bool cut_path = false;
+		for (;;) {
+			unsigned int check_scr_y, check_scr_x;
+			getmaxyx(stdscr, check_scr_y, check_scr_x);
+			if (check_scr_y != ui.scr_y || check_scr_x != ui.scr_x) {
+				ui.scr_y = check_scr_y;
+				ui.scr_x = check_scr_x;
+				wresize(current_dir_win, ui.scr_y, ui.scr_x / 2);
+				if (!ui.draw_selected_path) {
+					wresize(current_dir_win, ui.scr_y, ui.scr_x);
+				}
+				wresize(selected_dir_win, ui.scr_y, ui.scr_x / 2);
+				mvwin(selected_dir_win, 0, ui.scr_x / 2);
+				ui.term_height = ui.scr_y - 2;
+				ui.page = 1 * ui.term_height;
+			}
+			std::string current_path = std::filesystem::current_path().string();
+			if (current_path != "/") { current_path += "/"; }
+			std::vector<std::string> temp_current_dir_files =
+			       	file_io::get_dir_files(current_path, argc, argv, search_str);
+			std::sort(temp_current_dir_files.begin(), temp_current_dir_files.end());
+			size_t current_dir_size = temp_current_dir_files.size(); //getting a size before we change it
+			std::vector<std::string> current_dir_files;
+			if (current_dir_size != 0) {
+				for (size_t i = 0; i < current_dir_size; i++) {
+					int page_floor = ui.page - ui.term_height - 1;
+					if (i < ui.page && (signed)i > page_floor) {
+						//make current dir the same size as screen
+						current_dir_files.push_back(temp_current_dir_files[i]);
+					}
+					else if ((signed)i > page_floor) { break; }
+				}
+			}
+			std::string selected_filepath = "?";
+			std::vector<std::string> selected_dir_files;
+			std::string perm_bits_and_owner;
+			if (current_dir_size != 0) {
+				selected_filepath = current_dir_files[ui.curs_y];
+				perm_bits_and_owner = file_io::get_permbits(selected_filepath);
+				try {
+					if (std::filesystem::is_directory(selected_filepath) && ui.draw_selected_path) {
+						selected_dir_files = file_io::get_dir_files(selected_filepath, argc, argv);
+						std::sort(selected_dir_files.begin(), selected_dir_files.end());
+					}
+				}
+				catch (const std::filesystem::filesystem_error &) {} //no permission to read contents
+			}
+			werase(current_dir_win);
+			werase(selected_dir_win);
+			file_content.clear();
+			ui.draw_window(current_path, current_dir_files, current_dir_win, file_content, argc, argv, true);
+			if (!std::filesystem::is_directory(selected_filepath)) {
+				file_content = file_io::file_contents(selected_filepath, ui_ptr);
+			}
+			ui.draw_info(current_dir_win, ui.page, current_dir_size);
+			if (ui.draw_selected_path) {
+				ui.draw_window(selected_filepath, selected_dir_files, selected_dir_win, file_content, argc, argv);
+				mvwaddstr(selected_dir_win, ui.scr_y - 1, ui.scr_x / 2 - 2 - perm_bits_and_owner.size(),
+					       	perm_bits_and_owner.c_str());
+				wrefresh(selected_dir_win);
+			}
+			else {
+				mvwaddstr(current_dir_win, ui.scr_y - 1, (ui.scr_x / 2) - (perm_bits_and_owner.size() / 2),
+					       	perm_bits_and_owner.c_str());
+			}
+			wrefresh(current_dir_win);
+			wchar_t input = getch();
+			if (input == 'q') { //quit
+				std::string user_input = ui.input(" Quit? [Y/n]: ", 16, 5);
+				if (user_input.empty() || user_input == "y" || user_input == "Y") {
+					break;
+				}
+			}
+			switch (input) {
+				case 'a': //move back a dir
+				case 'h':
+				case KEY_LEFT:
+					ui.curs_y = 0;
+					ui.page = ui.term_height;
+					search_str = "";
+					chdir("..");
+					break;
+				case 'd': //move into selected dir
+				case 'l':
+				case KEY_RIGHT:
+					if (std::filesystem::is_directory(selected_filepath)) {
+						int err = chdir(selected_filepath.c_str());
+						if (err == -1) {
+							ui.alert_box(" Invalid Permission ", 20, 750, 5);
+						}
+						else {
+							ui.page = ui.term_height;
+							ui.curs_y = 0;
+							search_str = "";
+						}
+					}
+					break;
+				case 'w': //move cursor up
+				case 'k':
+				case KEY_UP:
+					if (current_dir_files.size() > 0) {
+						if (ui.curs_y > 0) {
+							ui.curs_y -= 1;
+						}
+						else if (ui.page != ui.term_height) {
+							ui.curs_y = ui.term_height - 1;
+							ui.page -= ui.term_height;
+						}
+					}
+					break;
+				case 's': //move cursor down
+				case 'j':
+				case KEY_DOWN:
+					if (current_dir_files.size() > 0) {
+						if ((unsigned)ui.curs_y < current_dir_files.size() - 1) {
+							ui.curs_y += 1;
+						}
+						else if ((ui.curs_y + 1 + ui.page - ui.scr_y + 2) !=
+								current_dir_size) {
+							ui.page += ui.term_height;
+							ui.curs_y = 0;
+						}
+					}
+					break;
+				case 'n': // jump to bottom of page
+					ui.curs_y = current_dir_files.size() - 1;
+					break;
+				case 'm': //jump to top of page
+					ui.curs_y = 0;
+					break;
+				case '-': //up a page
+					if (ui.page != ui.term_height) {
+						ui.page -= ui.term_height;
+						ui.curs_y = 0;
+					}
+					break;
+				case '=': //down a page
+					if (current_dir_files.size() % ui.term_height == 0 &&
+							current_dir_size > ui.term_height + 1) {
+						ui.page += ui.term_height;
+						ui.curs_y = 0;
+					}
+					break;
+				case ' ': //jump to line
+					{std::string user_input = ui.input(" Jump To: ", 20, 4);
+					try {
+						if (std::stoul(user_input) > 0 && std::stoul(user_input) <
+								current_dir_size + 1) {
+							ui.curs_y = std::stoi(user_input) % ui.term_height - 1;
+							if (std::stoul(user_input) == ui.term_height || ui.curs_y == -1) {
+								ui.curs_y = ui.term_height - 1;
+							}
+							ui.page = round_to(std::stoi(user_input), ui.term_height);
+						}
+					}
+					catch (const std::invalid_argument &) {
+						ui.alert_box(" Not A Number ", 14, 750, 5);
+					}
+					catch (const std::out_of_range &) {
+						ui.alert_box(" Too large of a number ", 23, 750, 5);
+					}}
+					break;
+				case 'v': //edit text
+					{def_prog_mode();
+					endwin();
+					pid_t pid = fork();
+					if (pid == 0) {
+						try {
+							const std::string editor = std::getenv("EDITOR");
+							execl(editor.c_str(), file_io::path_to_filename(editor).c_str(),
+									selected_filepath.c_str(), (char*)0);
+						}
+						catch (std::exception &e) {
+							std::cout << "\"$EDITOR\" environmental variable not set.\n";
+						}
+						exit(1);
+					}
+					wait(NULL);
+					refresh();}
+					break;
+				case 'u': //spawn shell
+					{def_prog_mode();
+					endwin();
+					pid_t pid = fork();
+					if (pid == 0) {
+						try {
+							const std::string shell = std::getenv("SHELL");
+							execl(shell.c_str(), file_io::path_to_filename(shell).c_str(), (char*)0);
+						}
+						catch (std::exception &e) {
+							std::cout << "\"$SHELL\" environmental variable not set.\n";
+						}
+						exit(1);
+					}
+					wait(NULL);
+					refresh();}
+					break;
+				case 'i': //open with xdg-open
+				case '\n':
+					if (current_dir_size != 0) {
+						def_prog_mode();
+						endwin();
+						pid_t pid = fork();
+						if (pid == 0) {
+							execl("/usr/bin/xdg-open", "xdg-open",
+								       	selected_filepath.c_str(), (char*)0);
+							exit(1);
+						}
+						wait(NULL);
+						refresh();
+					}
+					break;
+				case 'g': //delete
+					{std::string user_input = ui.input(" Delete File/Directory? [y/N]: ", 33, 5);
+					try {
+						if (std::filesystem::exists(selected_filepath) &&
+							       	(user_input == "Y" || user_input == "y")) {
+							std::filesystem::remove_all(selected_filepath);
+							ui.curs_y = 0;
+							ui.page = ui.term_height;
+						}
+					}
+					catch (const std::filesystem::filesystem_error &) {
+						ui.alert_box(" Delete Failed ", 15, 750, 5);
+					}}
+					break;
+				case 'e': //rename
+					if (current_dir_files.size() > 0) {
+						std::string user_input = ui.input(" Rename: ", 20, 4);
+						if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
+							try {
+								std::filesystem::rename(selected_filepath, user_input);
+							}
+							catch (const std::filesystem::filesystem_error &) {
+								ui.alert_box(" Invalid Filename ", 18, 750, 5);
+							}
+						}
+					}
+					break;
+				case 'c': //copy
+					if (current_dir_files.size() > 0) {
+						copy_path = selected_filepath;
+						cut_path = false;
+						ui.alert_box((" Copied: " + file_io::path_to_filename(selected_filepath) + " ").c_str(),
+							       	10 + file_io::path_to_filename(selected_filepath).size(), 500, 4);
+					}
+					break;
+				case 'x': //cut
+					{std::string user_input = ui.input(" Cut File/Directory? [y/N]: ", 30, 5);
+					if (std::filesystem::exists(selected_filepath) &&
+						       	(user_input == "y" || user_input == "Y")) {
+						copy_path = selected_filepath;
+						cut_path = true;
+					}}
+					break;
+				case 'p': //paste
+					if (std::filesystem::exists(copy_path)) {
+						try {
+							std::filesystem::copy(copy_path, current_path + file_io::path_to_filename(copy_path),
+									std::filesystem::copy_options::recursive);
+							if (cut_path) {
+								ui.alert_box((" Cut: " + file_io::path_to_filename(copy_path) + " ").c_str(),
+										7 + file_io::path_to_filename(copy_path).size(), 500, 4);
+								std::filesystem::remove_all(copy_path);
+								ui.curs_y = 0;
+								ui.page = ui.term_height;
+								cut_path = false;
+							}
+							else {
+								ui.alert_box((" Pasted: " + file_io::path_to_filename(copy_path) + " ").c_str(),
+										10 + file_io::path_to_filename(copy_path).size(), 500, 4);
+							}
+						}
+						catch (std::exception& e) {
+							if (cut_path) {
+								ui.alert_box(" Cut Failed ", 12, 750, 5);
+								cut_path = false;
+							}
+							else {
+								ui.alert_box(" Paste Failed ", 14, 750, 5);
+							}
+						}
+					}
+					break;
+				case 'b': //search
+					if (search_str.empty()) {
+						std::string user_input = ui.input(" Search: ", 20, 4);
+						if (!user_input.empty()) {
+							search_str = user_input;
+							ui.curs_y = 0;
+							ui.page = ui.term_height;
+						}
+					}
+					else {
+						search_str = "";
+						ui.curs_y = 0;
+						ui.page = ui.term_height;
+					}
+					break;
+				case ';':
+					{const unsigned int win_resize_width = ui.draw_selected_path ? ui.scr_x : ui.scr_x / 2;
+					ui.draw_selected_path = !ui.draw_selected_path;
+					wresize(current_dir_win, ui.scr_y, win_resize_width);}
+					break;
+				case '?':
+					const int help_win_y = 26;
+					const int help_win_x = 80;
+					WINDOW *help_win = newwin(help_win_y, help_win_x, ui.scr_y / 2 - help_win_y / 2,
+						       	ui.scr_x / 2 - help_win_x / 2);
+					mvwaddstr(help_win, 1, help_win_x / 2 - 5, "Keybinds:");
+					mvwaddstr(help_win, 3, 1, "\"q\" - Quit or exit");
+					mvwaddstr(help_win, 4, 1, "\"w\" or \"k\" or UP ARROW - Move cursor up");
+					mvwaddstr(help_win, 5, 1, "\"s\" or \"j\" or DOWN ARROW - Move cursor down");
+					mvwaddstr(help_win, 6, 1, "\"a\" or \"h\" or LEFT ARROW - Move back a directory");
+					mvwaddstr(help_win, 7, 1, "\"d\" or \"l\" or RIGHT ARROW - Move into a directory");
+					mvwaddstr(help_win, 8, 1, "\";\" - Make left window fullscreen");
+					mvwaddstr(help_win, 9, 1, "SPACEBAR - Jump to specific line number");
+					mvwaddstr(help_win, 10, 1, "\"=\" - Go forward a page");
+					mvwaddstr(help_win, 11, 1, "\"-\" - Go back a page");
+					mvwaddstr(help_win, 12, 1, "\"m\" - Jump to top of current page");
+					mvwaddstr(help_win, 13, 1, "\"n\" - Jump to bottom of current page");
+					mvwaddstr(help_win, 14, 1, "\"i\" or ENTER - Open selected item with xdg-open");
+					mvwaddstr(help_win, 15, 1, "\"u\" - Spawn interactive shell");
+					mvwaddstr(help_win, 16, 1, "\"v\" - Edit file or folder with default editor");
+					mvwaddstr(help_win, 17, 1, "\"b\" - Search for file or folder (press again to stop)");
+					mvwaddstr(help_win, 18, 1, "\"e\" - Rename file or folder (leave empty to cancel)");
+					mvwaddstr(help_win, 19, 1, "\"g\" - Delete file or folder (if folder contents are also deleted)");
+					mvwaddstr(help_win, 20, 1, "\"c\" - Copy a file or folder");
+					mvwaddstr(help_win, 21, 1, "\"p\" - Paste a file or folder");
+					mvwaddstr(help_win, 22, 1, "\"x\" - Cut a file or folder (deletes after paste rather than before)");
+					mvwaddstr(help_win, 24, 1, "Press any key to exit help menu...");
+					box(help_win, 0, 0);
+					wrefresh(help_win);
+					timeout(-1);
+					getch();
+					delwin(help_win);
+					timeout(update_speed);
+					break;
+			}
+		}
+		endwin();
+	}
+	return 0;
+}
