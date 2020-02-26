@@ -41,7 +41,7 @@ void user_interface::draw_window(const std::string &path, std::vector<std::strin
 			if (std::filesystem::is_directory(files[i])) {
 				wattron(win, COLOR_PAIR(2));
 			}
-			if (i == (unsigned)curs_y && draw_curs) { //highlight file where cursor is
+			if (i == static_cast<unsigned>(curs_y) && draw_curs) { //highlight file where cursor is
 				wattron(win, COLOR_PAIR(1));
 			}
 			if (std::filesystem::is_symlink(files[i]) && check_for_flag(argc, argv, "-s")) {
@@ -135,11 +135,11 @@ int main(int argc, char *argv[]) {
 			if (current_dir_size != 0) {
 				for (size_t i = 0; i < current_dir_size; i++) {
 					int page_floor = ui.page - ui.term_height - 1;
-					if (i < ui.page && (signed)i > page_floor) {
+					if (i < ui.page && static_cast<signed>(i) > page_floor) {
 						//make current dir the same size as screen
 						current_dir_files.push_back(temp_current_dir_files[i]);
 					}
-					else if ((signed)i > page_floor) { break; }
+					else if (static_cast<signed>(i) > page_floor) { break; }
 				}
 			}
 			std::string selected_filepath = "?";
@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
 				case 'j':
 				case KEY_DOWN:
 					if (current_dir_files.size() > 0) {
-						if ((unsigned)ui.curs_y < current_dir_files.size() - 1) {
+						if (static_cast<unsigned>(ui.curs_y) < current_dir_files.size() - 1) {
 							ui.curs_y += 1;
 						}
 						else if ((ui.curs_y + 1 + ui.page - ui.scr_y + 2) !=
