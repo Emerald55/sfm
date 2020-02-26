@@ -9,8 +9,8 @@
 #include <fstream>
 #include "file_io.h"
 
-std::vector<std::string> file_io::get_dir_files(const std::string path, int argc, char* argv[], 
-		std::string search_str) {
+std::vector<std::string> file_io::get_dir_files(const std::string &path, const int &argc, char* argv[], 
+		const std::string &search_str) {
 	std::vector<std::string> files;
 	for (const auto &entry : std::filesystem::directory_iterator(path)) {
 		bool was_pushed = false;
@@ -33,7 +33,8 @@ std::vector<std::string> file_io::get_dir_files(const std::string path, int argc
 	}
 	return files;
 }
-std::vector<std::string> file_io::file_contents(const std::string &path, user_interface *ui_ptr) {
+std::vector<std::string> file_io::file_contents(const std::string &path,
+	       	const unsigned int &term_height) {
 	std::ifstream file(path);
 	std::vector<std::string> contents;
 	if (file) {
@@ -45,14 +46,14 @@ std::vector<std::string> file_io::file_contents(const std::string &path, user_in
 				line.replace(pos, 1, "    "); //convert tabs to space for counting
 			}
 			contents.push_back(line);
-			if (i > ui_ptr->term_height) { break; }
+			if (i > term_height) { break; }
 			i++;
 		}
 	}
 	file.close();
 	return contents;
 }
-std::string file_io::get_permbits(std::string current_filename) {
+std::string file_io::get_permbits(const std::string &current_filename) {
 	struct stat st;
 	std::string file_perms = " ";
 	if (stat(current_filename.c_str(), &st) == 0) {

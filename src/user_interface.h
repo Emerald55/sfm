@@ -14,10 +14,12 @@ class user_interface {
 			page = 1 * term_height;
 		}
 		void draw_window(const std::string &path, std::vector<std::string> files, WINDOW *win, 
-				std::vector<std::string> file_contents, int argc, char* argv[], bool draw_curs);
-		void draw_info(WINDOW *win, int page, int current_dir_size);
-		std::string input(const char* text, const int win_width, const int color_type);
-		void alert_box(const char* text, const int win_width, const int sleep_time, const int alert_color);
+				std::vector<std::string> file_contents, const int &argc, char* argv[],
+			       	const bool &draw_curs);
+		void draw_info(WINDOW *win, const unsigned int &page, const unsigned int &current_dir_size);
+		std::string input(const char* text, const unsigned int &win_width, const unsigned int &color_type);
+		void alert_box(const char* text, const unsigned int &win_width, const unsigned int &sleep_time,
+			       	const unsigned int &alert_color);
 	private:
 		void draw_window_title(const std::string &path, WINDOW *win);
 };

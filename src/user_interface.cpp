@@ -6,16 +6,19 @@
 #include <vector>
 #include "user_interface.h"
 
-void user_interface::draw_info(WINDOW *win, int page, int current_dir_size) {
+void user_interface::draw_info(WINDOW *win, const unsigned int &page,
+	       	const unsigned int &current_dir_size) {
 	std::string line_info = " Line: " + std::to_string(curs_y + 1 + page - scr_y + 2)
 		+ "/" + std::to_string(current_dir_size) + " ";
 	std::string page_info = " Page: " + std::to_string(page / term_height) +
 		"/" + std::to_string(current_dir_size / term_height + 1) +  " ";
 	const unsigned int offset = draw_selected_path ? scr_x / 2 : scr_x;
-	mvwaddstr(win, scr_y - 1, offset - line_info.size() - page_info.size() - 5, line_info.c_str());
+	mvwaddstr(win, scr_y - 1, offset - line_info.size() - page_info.size() - 5,
+		       	line_info.c_str());
 	mvwaddstr(win, scr_y - 1, offset - page_info.size() - 2, page_info.c_str());
 }
-std::string user_interface::input(const char* text, const int win_width, const int color_type) {
+std::string user_interface::input(const char* text, const unsigned int &win_width,
+	       	const unsigned int &color_type) {
 	curs_set(1);
 	WINDOW *input_win = newwin(1, win_width, scr_y - 1, 2);
 	wattron(input_win, COLOR_PAIR(color_type));
@@ -30,8 +33,8 @@ std::string user_interface::input(const char* text, const int win_width, const i
 	delwin(input_win);
 	return std::string(user_input);
 }
-void user_interface::alert_box(const char* text, const int win_width, const int sleep_time,
-	       	const int alert_color) {
+void user_interface::alert_box(const char* text, const unsigned int &win_width,
+	       	const unsigned int &sleep_time, const unsigned int &alert_color) {
 	WINDOW *alert_win = newwin(1, win_width, scr_y - 1, 2);
 	wattron(alert_win, COLOR_PAIR(alert_color)); //5
 	mvwaddstr(alert_win, 0, 0, text);

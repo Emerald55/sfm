@@ -9,7 +9,7 @@
 #include "user_interface.h"
 #include "file_io.h"
 
-bool check_for_flag(int argc, char* argv[], std::string flag) {
+bool check_for_flag(int argc, char* argv[], const std::string &flag) {
 	for (int i = 0; i < argc; i++) {
 		if (flag == std::string(argv[i])) {
 			return true;
@@ -26,7 +26,8 @@ inline int round_to(const int num, const int multiple) {
 }
 
 void user_interface::draw_window(const std::string &path, std::vector<std::string> files, WINDOW *win, 
-		std::vector<std::string> file_contents, int argc, char* argv[], bool draw_curs = false) {
+		std::vector<std::string> file_contents, const int &argc, char* argv[],
+	       	const bool &draw_curs = false) {
 	if (file_contents.empty()) { //draw filenames
 		for (size_t i = 0; i < files.size(); i++) {
 			std::string file = file_io::path_to_filename(files[i]);
@@ -103,7 +104,6 @@ int main(int argc, char *argv[]) {
 		int update_speed = 100;
 		timeout(update_speed);
 		user_interface ui;
-		user_interface *ui_ptr = &ui;
 		WINDOW *current_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, 0);
 		WINDOW *selected_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, ui.scr_x / 2);
 		std::vector<std::string> file_content;
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
 			file_content.clear();
 			ui.draw_window(current_path, current_dir_files, current_dir_win, file_content, argc, argv, true);
 			if (!std::filesystem::is_directory(selected_filepath)) {
-				file_content = file_io::file_contents(selected_filepath, ui_ptr);
+				file_content = file_io::file_contents(selected_filepath, ui.term_height);
 			}
 			ui.draw_info(current_dir_win, ui.page, current_dir_size);
 			if (ui.draw_selected_path) {
