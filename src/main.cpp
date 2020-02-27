@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
 		for (;;) {
 			unsigned int check_scr_y, check_scr_x;
 			getmaxyx(stdscr, check_scr_y, check_scr_x);
-			if (check_scr_y != ui.scr_y || check_scr_x != ui.scr_x) {
+			if (check_scr_y != ui.scr_y || check_scr_x != ui.scr_x) { //check for screen resize
 				ui.scr_y = check_scr_y;
 				ui.scr_x = check_scr_x;
 				wresize(current_dir_win, ui.scr_y, ui.scr_x / 2);
@@ -127,19 +127,15 @@ int main(int argc, char *argv[]) {
 			}
 			std::string current_path = std::filesystem::current_path().string();
 			if (current_path != "/") { current_path += "/"; }
-			std::vector<std::string> temp_current_dir_files =
-			       	file_io::get_dir_files(current_path, argc, argv, search_str);
-			std::sort(temp_current_dir_files.begin(), temp_current_dir_files.end());
-			size_t current_dir_size = temp_current_dir_files.size(); //getting a size before we change it
-			std::vector<std::string> current_dir_files;
+			std::vector<std::string> current_dir_files = file_io::get_dir_files(current_path, argc, argv, search_str);
+			std::sort(current_dir_files.begin(), current_dir_files.end());
+			size_t current_dir_size = current_dir_files.size();
 			if (current_dir_size != 0) {
-				for (size_t i = 0; i < current_dir_size; i++) {
-					int page_floor = ui.page - ui.term_height - 1;
-					if (i < ui.page && static_cast<signed>(i) > page_floor) {
-						//make current dir the same size as screen
-						current_dir_files.push_back(temp_current_dir_files[i]);
-					}
-					else if (static_cast<signed>(i) > page_floor) { break; }
+				const int page_floor = ui.page - ui.term_height;
+				current_dir_files.erase(current_dir_files.begin(), current_dir_files.begin() + page_floor); //trim before page
+				if (current_dir_size > ui.page) {
+					current_dir_files.erase(current_dir_files.begin() + ui.page - page_floor,
+						       	current_dir_files.end()); //trim after
 				}
 			}
 			std::string selected_filepath = "?";
@@ -281,12 +277,12 @@ int main(int argc, char *argv[]) {
 							execl(editor.c_str(), file_io::path_to_filename(editor).c_str(),
 									selected_filepath.c_str(), (char*)0);
 						}
-						catch (std::exception &e) {
+						catch (const std::exception &e) {
 							std::cout << "\"$EDITOR\" environmental variable not set.\n";
 						}
 						exit(1);
 					}
-					wait(NULL);
+					waitpid(pid, NULL, 0);
 					refresh();}
 					break;
 				case 'u': //spawn shell
@@ -298,12 +294,12 @@ int main(int argc, char *argv[]) {
 							const std::string shell = std::getenv("SHELL");
 							execl(shell.c_str(), file_io::path_to_filename(shell).c_str(), (char*)0);
 						}
-						catch (std::exception &e) {
+						catch (const std::exception &e) {
 							std::cout << "\"$SHELL\" environmental variable not set.\n";
 						}
 						exit(1);
 					}
-					wait(NULL);
+					waitpid(pid, NULL, 0);
 					refresh();}
 					break;
 				case 'i': //open with xdg-open
@@ -317,7 +313,7 @@ int main(int argc, char *argv[]) {
 								       	selected_filepath.c_str(), (char*)0);
 							exit(1);
 						}
-						wait(NULL);
+						waitpid(pid, NULL, 0);
 						refresh();
 					}
 					break;
