@@ -8,14 +8,13 @@
 #include "file_io.h"
 #include "keybinds.h"
 
-void keybinds::move_left(user_interface &ui, std::string &search_str) {
+void keybinds::move_left(user_interface &ui) {
 	ui.curs_y = 0;
 	ui.page = ui.term_height;
 	search_str = "";
 	chdir("..");
 }
-void keybinds::move_right(user_interface &ui, const std::string &selected_filepath,
-	       	std::string &search_str) {
+void keybinds::move_right(user_interface &ui, const std::string &selected_filepath) {
 	if (std::filesystem::is_directory(selected_filepath)) {
 		int err = chdir(selected_filepath.c_str());
 		if (err == -1) {
@@ -214,7 +213,7 @@ void keybinds::paste(user_interface &ui, const std::string &current_path) {
 		}
 	}
 }
-void keybinds::search(user_interface &ui, std::string &search_str) {
+void keybinds::search(user_interface &ui) {
 	if (search_str.empty()) {
 		std::string user_input = ui.input(" Search: ", 20, 4);
 		if (!user_input.empty()) {

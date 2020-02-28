@@ -96,11 +96,9 @@ int main(int argc, char *argv[]) {
 		const unsigned int update_speed = 100;
 		timeout(update_speed);
 		user_interface ui;
-		keybinds kb;
 		WINDOW *current_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, 0);
 		WINDOW *selected_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, ui.scr_x / 2);
-		std::vector<std::string> file_content;
-		std::string search_str;
+		keybinds kb;
 		for (;;) {
 			unsigned int check_scr_y, check_scr_x;
 			getmaxyx(stdscr, check_scr_y, check_scr_x);
@@ -118,7 +116,7 @@ int main(int argc, char *argv[]) {
 			}
 			std::string current_path = std::filesystem::current_path().string();
 			if (current_path != "/") { current_path += "/"; }
-			std::vector<std::string> current_dir_files = file_io::get_dir_files(current_path, argc, argv, search_str);
+			std::vector<std::string> current_dir_files = file_io::get_dir_files(current_path, argc, argv, kb.search_str);
 			std::sort(current_dir_files.begin(), current_dir_files.end());
 			size_t current_dir_size = current_dir_files.size();
 			std::string selected_filepath = "?";
@@ -144,7 +142,7 @@ int main(int argc, char *argv[]) {
 			}
 			werase(current_dir_win);
 			werase(selected_dir_win);
-			file_content.clear();
+			std::vector<std::string> file_content;
 			ui.draw_window(current_path, current_dir_files, current_dir_win, file_content, argc, argv, true);
 			if (!std::filesystem::is_directory(selected_filepath)) {
 				file_content = file_io::file_contents(selected_filepath, ui.term_height);
@@ -172,12 +170,12 @@ int main(int argc, char *argv[]) {
 				case 'a':
 				case 'h':
 				case KEY_LEFT:
-					kb.move_left(ui, search_str);
+					kb.move_left(ui);
 					break;
 				case 'd':
 				case 'l':
 				case KEY_RIGHT:
-					kb.move_right(ui, selected_filepath, search_str);
+					kb.move_right(ui, selected_filepath);
 					break;
 				case 'w':
 				case 'k':
@@ -230,7 +228,7 @@ int main(int argc, char *argv[]) {
 					kb.paste(ui, current_path);
 					break;
 				case 'b':
-					kb.search(ui, search_str);
+					kb.search(ui);
 					break;
 				case ';':
 					kb.screen_change(ui, current_dir_win);
