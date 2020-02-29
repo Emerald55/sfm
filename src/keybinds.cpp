@@ -239,7 +239,7 @@ void keybinds::help(user_interface &ui, const unsigned int &update_speed) {
 	WINDOW *help_win = newwin(help_win_y, help_win_x, ui.scr_y / 2 - help_win_y / 2,
 			ui.scr_x / 2 - help_win_x / 2);
 	mvwaddstr(help_win, 1, help_win_x / 2 - 5, "Keybinds:");
-	mvwaddstr(help_win, 3, 1, "\"q\" - Qui. or exit");
+	mvwaddstr(help_win, 3, 1, "\"q\" - Quit or exit");
 	mvwaddstr(help_win, 4, 1, "\"w\" or \"k\" or UP ARROW - Move cursor up");
 	mvwaddstr(help_win, 5, 1, "\"s\" or \"j\" or DOWN ARROW - Move cursor down");
 	mvwaddstr(help_win, 6, 1, "\"a\" or \"h\" or LEFT ARROW - Move back a directory");
