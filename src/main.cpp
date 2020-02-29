@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <unistd.h>
 #include <algorithm>
+#include <locale.h>
 #include "keybinds.h"
 #include "user_interface.h"
 #include "file_io.h"
@@ -81,6 +82,7 @@ int main(int argc, char *argv[]) {
 		std::cout << "	-p /start/path    Path to start program from\n";
 	}
 	else {
+		setlocale(LC_ALL, "");
 		initscr();
 		start_color();
 		init_pair(1, COLOR_WHITE, COLOR_RED); //cursor
