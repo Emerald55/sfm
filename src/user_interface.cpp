@@ -4,8 +4,53 @@
 #include <thread>
 #include <filesystem>
 #include <vector>
+#include "file_io.h"
 #include "user_interface.h"
 
+void user_interface::draw_window_files(const std::string &path, const std::vector<std::string> &files, WINDOW *win, 
+		const int &argc, char* argv[], const bool &draw_curs) {
+	for (size_t i = 0; i < files.size(); i++) {
+		std::string file = file_io::path_to_filename(files[i]);
+		std::string num_format = std::to_string(i + page - scr_y + 3) + ".";
+		if (!draw_curs) {
+			num_format = std::to_string(i + 1) + ".";
+		}
+		wattron(win, COLOR_PAIR(3));
+		mvwaddstr(win, i + 1, 1, num_format.c_str());
+		wattroff(win, COLOR_PAIR(3));
+		if (std::filesystem::is_directory(files[i])) {
+			wattron(win, COLOR_PAIR(2));
+		}
+		if (i == static_cast<unsigned>(curs_y) && draw_curs) { //highlight file where cursor is
+			wattron(win, COLOR_PAIR(1));
+		}
+		if (std::filesystem::is_symlink(files[i]) && check_for_flag(argc, argv, "-s")) {
+			file += " -> ";
+			file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
+		}
+		const unsigned int current_scr_size = draw_selected_path ? scr_x / 2 - 2 : scr_x;
+		if (num_format.size() + 1 + file.size() > current_scr_size) {
+			file = file.substr(0, current_scr_size - num_format.size() - 1);
+		}
+		mvwaddstr(win, i + 1, 2 + num_format.size(), file.c_str());
+		wattroff(win, COLOR_PAIR(1));
+		wattroff(win, COLOR_PAIR(2));
+	}
+	box(win, 0, 0);
+	draw_window_title(path, win);
+}
+void user_interface::draw_window_file_contents(const std::string &path, WINDOW *win, 
+		std::vector<std::string> file_contents) {
+	for (size_t i = 0; i < file_contents.size(); i++) {
+		if (file_contents[i].size() > scr_x / 2 - 2) {
+			file_contents[i] = file_contents[i].substr(0, scr_x / 2 - 2); //remove off-screen lines
+		}
+		if (i > term_height - 1) { break; }
+		mvwaddstr(win, i + 1, 1, file_contents[i].c_str());
+	}
+	box(win, 0, 0);
+	draw_window_title(path, win);
+}
 void user_interface::draw_info(WINDOW *win, const unsigned int &page,
 	       	const unsigned int &current_dir_size) {
 	std::string line_info = " Line: " + std::to_string(curs_y + 1 + page - scr_y + 2)

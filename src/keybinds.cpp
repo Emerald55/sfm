@@ -90,23 +90,26 @@ void keybinds::jump_to_line(user_interface &ui, const size_t &current_dir_size) 
 		ui.alert_box(" Too large of a number ", 23, 750, 5);
 	}
 }
-void keybinds::edit_text(const std::string &selected_filepath) {
-	def_prog_mode();
-	endwin();
-	pid_t pid = fork();
-	if (pid == 0) {
-		try {
-			const std::string editor = std::getenv("EDITOR");
-			execl(editor.c_str(), file_io::path_to_filename(editor).c_str(),
-					selected_filepath.c_str(), (char*)0);
+void keybinds::edit_text(const std::string &selected_filepath,
+	       	const size_t &current_dir_size) {
+	if (current_dir_size != 0) {
+		def_prog_mode();
+		endwin();
+		pid_t pid = fork();
+		if (pid == 0) {
+			try {
+				const std::string editor = std::getenv("EDITOR");
+				execl(editor.c_str(), file_io::path_to_filename(editor).c_str(),
+						selected_filepath.c_str(), (char*)0);
+			}
+			catch (const std::exception &e) {
+				std::cout << "\"$EDITOR\" environmental variable not set.\n";
+			}
+			exit(1);
 		}
-		catch (const std::exception &e) {
-			std::cout << "\"$EDITOR\" environmental variable not set.\n";
-		}
-		exit(1);
+		waitpid(pid, NULL, 0);
+		refresh();
 	}
-	waitpid(pid, NULL, 0);
-	refresh();
 }
 void keybinds::spawn_shell() {
 	def_prog_mode();

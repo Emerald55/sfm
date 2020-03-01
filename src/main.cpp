@@ -18,51 +18,6 @@ bool check_for_flag(int argc, char* argv[], const std::string &flag) {
 	return false;
 }
 
-void user_interface::draw_window(const std::string &path, std::vector<std::string> files, WINDOW *win, 
-		std::vector<std::string> file_contents, const int &argc, char* argv[],
-	       	const bool &draw_curs = false) {
-	if (file_contents.empty()) { //draw filenames
-		for (size_t i = 0; i < files.size(); i++) {
-			std::string file = file_io::path_to_filename(files[i]);
-			std::string num_format = std::to_string(i + page - scr_y + 3) + ".";
-			if (!draw_curs) {
-				num_format = std::to_string(i + 1) + ".";
-			}
-			wattron(win, COLOR_PAIR(3));
-			mvwaddstr(win, i + 1, 1, num_format.c_str());
-			wattroff(win, COLOR_PAIR(3));
-			if (std::filesystem::is_directory(files[i])) {
-				wattron(win, COLOR_PAIR(2));
-			}
-			if (i == static_cast<unsigned>(curs_y) && draw_curs) { //highlight file where cursor is
-				wattron(win, COLOR_PAIR(1));
-			}
-			if (std::filesystem::is_symlink(files[i]) && check_for_flag(argc, argv, "-s")) {
-				file += " -> ";
-				file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
-			}
-			const unsigned int current_scr_size = draw_selected_path ? scr_x / 2 - 2 : scr_x;
-			if (num_format.size() + 1 + file.size() > current_scr_size) {
-				file = file.substr(0, current_scr_size - num_format.size() - 1);
-			}
-			mvwaddstr(win, i + 1, 2 + num_format.size(), file.c_str());
-			wattroff(win, COLOR_PAIR(1));
-			wattroff(win, COLOR_PAIR(2));
-		}
-	}
-	else { //draw file contents
-		for (size_t i = 0; i < file_contents.size(); i++) {
-			if (file_contents[i].size() > scr_x / 2 - 2) {
-				file_contents[i] = file_contents[i].substr(0, scr_x / 2 - 2); //remove off-screen lines
-			}
-			if (i > term_height - 1) { break; }
-			mvwaddstr(win, i + 1, 1, file_contents[i].c_str());
-		}
-	}
-	box(win, 0, 0);
-	draw_window_title(path, win);
-}
-
 int main(int argc, char *argv[]) {
 	for (int i = 0; i < argc; i++) {
 		if (std::string(argv[i]) == "-p") {
@@ -145,13 +100,18 @@ int main(int argc, char *argv[]) {
 			werase(current_dir_win);
 			werase(selected_dir_win);
 			std::vector<std::string> file_content;
-			ui.draw_window(current_path, current_dir_files, current_dir_win, file_content, argc, argv, true);
+			ui.draw_window_files(current_path, current_dir_files, current_dir_win, argc, argv, true);
 			if (!std::filesystem::is_directory(selected_filepath)) {
 				file_content = file_io::file_contents(selected_filepath, ui.term_height);
 			}
 			ui.draw_info(current_dir_win, ui.page, current_dir_size);
 			if (ui.draw_selected_path) {
-				ui.draw_window(selected_filepath, selected_dir_files, selected_dir_win, file_content, argc, argv);
+				if (file_content.empty()) {
+					ui.draw_window_files(selected_filepath, selected_dir_files, selected_dir_win, argc, argv);
+				}
+				else {
+					ui.draw_window_file_contents(selected_filepath, selected_dir_win, file_content);
+				}
 				mvwaddstr(selected_dir_win, ui.scr_y - 1, ui.scr_x / 2 - 2 - perm_bits_and_owner.size(),
 					       	perm_bits_and_owner.c_str());
 				wrefresh(selected_dir_win);
@@ -205,7 +165,7 @@ int main(int argc, char *argv[]) {
 					kb.jump_to_line(ui, current_dir_size);
 					break;
 				case 'v':
-					kb.edit_text(selected_filepath);
+					kb.edit_text(selected_filepath, current_dir_size);
 					break;
 				case 'u':
 					kb.spawn_shell();

@@ -17,7 +17,7 @@ class keybinds {
 		void down_page(user_interface &ui, const unsigned int current_dir_size_currently, 
 				const size_t &current_dir_size);
 		void jump_to_line(user_interface &ui, const size_t &current_dir_size);
-		void edit_text(const std::string &selected_filepath);
+		void edit_text(const std::string &selected_filepath, const size_t &current_dir_size);
 		void spawn_shell();
 		void xdg_open(const std::string &selected_filepath, const size_t &current_dir_size);
 		void remove(user_interface &ui, const std::string &selected_filepath);
