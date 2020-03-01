@@ -9,6 +9,17 @@
 #include "user_interface.h"
 #include "file_io.h"
 
+inline bool file_contents_printable(const std::string &path) {
+	if (std::filesystem::is_directory(path) ||
+		       	std::filesystem::is_block_file(path) ||
+		       	std::filesystem::is_character_file(path) ||
+		       	std::filesystem::is_fifo(path) ||
+		       	std::filesystem::is_socket(path)) {
+		return false;
+	}
+	return true;
+}
+
 bool check_for_flag(int argc, char* argv[], const std::string &flag) {
 	for (int i = 0; i < argc; i++) {
 		if (flag == std::string(argv[i])) {
@@ -101,7 +112,7 @@ int main(int argc, char *argv[]) {
 			werase(selected_dir_win);
 			std::vector<std::string> file_content;
 			ui.draw_window_files(current_path, current_dir_files, current_dir_win, argc, argv, true);
-			if (!std::filesystem::is_directory(selected_filepath)) {
+			if (file_contents_printable(selected_filepath)) {
 				file_content = file_io::file_contents(selected_filepath, ui.term_height);
 			}
 			ui.draw_info(current_dir_win, ui.page, current_dir_size);
