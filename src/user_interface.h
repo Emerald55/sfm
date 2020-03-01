@@ -7,7 +7,7 @@ class user_interface {
 		int curs_y = 0;
 		unsigned int term_height;
 		unsigned int page;
-		bool draw_selected_path = true;
+		bool draw_selected_path = false;
 		user_interface() {
 			getmaxyx(stdscr, scr_y, scr_x);
 			term_height = scr_y - 2;

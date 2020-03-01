@@ -247,7 +247,7 @@ void keybinds::help(user_interface &ui, const unsigned int &update_speed) {
 	mvwaddstr(help_win, 5, 1, "\"s\" or \"j\" or DOWN ARROW - Move cursor down");
 	mvwaddstr(help_win, 6, 1, "\"a\" or \"h\" or LEFT ARROW - Move back a directory");
 	mvwaddstr(help_win, 7, 1, "\"d\" or \"l\" or RIGHT ARROW - Move into a directory");
-	mvwaddstr(help_win, 8, 1, "\";\" - Make left window fullscreen");
+	mvwaddstr(help_win, 8, 1, "\";\" - Split screen toggle");
 	mvwaddstr(help_win, 9, 1, "SPACEBAR - Jump to specific line number");
 	mvwaddstr(help_win, 10, 1, "\"=\" - Go forward a page");
 	mvwaddstr(help_win, 11, 1, "\"-\" - Go back a page");

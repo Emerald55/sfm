@@ -64,8 +64,8 @@ int main(int argc, char *argv[]) {
 		const unsigned int update_speed = 100;
 		timeout(update_speed);
 		user_interface ui;
-		WINDOW *current_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, 0);
-		WINDOW *selected_dir_win = newwin(ui.scr_y, ui.scr_x / 2, 0, ui.scr_x / 2);
+		WINDOW *current_dir_win = newwin(ui.scr_y, ui.scr_x, 0, 0);
+		WINDOW *selected_dir_win = newwin(0, 0, 0, ui.scr_x / 2);
 		keybinds kb;
 		for (;;) {
 			unsigned int check_scr_y, check_scr_x;
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 			werase(selected_dir_win);
 			std::vector<std::string> file_content;
 			ui.draw_window_files(current_path, current_dir_files, current_dir_win, argc, argv, true);
-			if (file_contents_printable(selected_filepath)) {
+			if (file_contents_printable(selected_filepath) && ui.draw_selected_path) {
 				file_content = file_io::file_contents(selected_filepath, ui.term_height);
 			}
 			ui.draw_info(current_dir_win, ui.page, current_dir_size);
