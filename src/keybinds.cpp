@@ -258,7 +258,7 @@ void keybinds::help(user_interface &ui, const unsigned int &update_speed) {
 	mvwaddstr(help_win, 16, 1, "\"v\" - Edit file or folder with default editor");
 	mvwaddstr(help_win, 17, 1, "\"b\" - Search for file or folder (press again to stop)");
 	mvwaddstr(help_win, 18, 1, "\"e\" - Rename file or folder (leave empty to cancel)");
-	mvwaddstr(help_win, 19, 1, "\"g\" - Delete file or folder (if folder contents are also deleted)");
+	mvwaddstr(help_win, 19, 1, "\"g\" - Delete file or folder");
 	mvwaddstr(help_win, 20, 1, "\"c\" - Copy a file or folder");
 	mvwaddstr(help_win, 21, 1, "\"p\" - Paste a file or folder");
 	mvwaddstr(help_win, 22, 1, "\"x\" - Cut a file or folder (deletes after paste rather than before)");
