@@ -8,86 +8,85 @@
 #include "file_io.h"
 #include "keybinds.h"
 
-void keybinds::move_left(user_interface &ui) {
-	ui.curs_y = 0;
-	ui.page = ui.term_height;
+void keybinds::move_left() {
+	ui->curs_y = 0;
+	ui->page = ui->term_height;
 	search_str = "";
 	chdir("..");
 }
-void keybinds::move_right(user_interface &ui, const std::string &selected_filepath) {
+void keybinds::move_right(const std::string &selected_filepath) {
 	if (std::filesystem::is_directory(selected_filepath)) {
 		int err = chdir(selected_filepath.c_str());
 		if (err == -1) {
-			ui.alert_box(" Invalid Permission ", 20, 750, 5);
+			ui->alert_box(" Invalid Permission ", 20, 750, 5);
 		}
 		else {
-			ui.page = ui.term_height;
-			ui.curs_y = 0;
+			ui->page = ui->term_height;
+			ui->curs_y = 0;
 			search_str = "";
 		}
 	}
 }
-void keybinds::move_up(user_interface &ui, const unsigned int current_dir_size_currently) {
+void keybinds::move_up(const unsigned int current_dir_size_currently) {
 	if (current_dir_size_currently > 0) {
-		if (ui.curs_y > 0) {
-			ui.curs_y -= 1;
+		if (ui->curs_y > 0) {
+			ui->curs_y -= 1;
 		}
-		else if (ui.page != ui.term_height) {
-			ui.curs_y = ui.term_height - 1;
-			ui.page -= ui.term_height;
+		else if (ui->page != ui->term_height) {
+			ui->curs_y = ui->term_height - 1;
+			ui->page -= ui->term_height;
 		}
 	}
 }
-void keybinds::move_down(user_interface &ui, const unsigned int current_dir_size_currently, 
+void keybinds::move_down(const unsigned int current_dir_size_currently, 
 		const size_t &current_dir_size) {
 	if (current_dir_size_currently > 0) {
-		if (static_cast<unsigned>(ui.curs_y) < current_dir_size_currently - 1) {
-			ui.curs_y += 1;
+		if (static_cast<unsigned>(ui->curs_y) < current_dir_size_currently - 1) {
+			ui->curs_y += 1;
 		}
-		else if ((ui.curs_y + 1 + ui.page - ui.scr_y + 2) != current_dir_size) {
-			ui.page += ui.term_height;
-			ui.curs_y = 0;
+		else if ((ui->curs_y + 1 + ui->page - ui->scr_y + 2) != current_dir_size) {
+			ui->page += ui->term_height;
+			ui->curs_y = 0;
 		}
 	}
 }
-void keybinds::jump_to_top(user_interface &ui) {
-	ui.curs_y = 0;
+void keybinds::jump_to_top() {
+	ui->curs_y = 0;
 }
-void keybinds::jump_to_bottom(user_interface &ui,
-		const unsigned int current_dir_size_currently) {
-	ui.curs_y = current_dir_size_currently - 1;
+void keybinds::jump_to_bottom(const unsigned int current_dir_size_currently) {
+	ui->curs_y = current_dir_size_currently - 1;
 }
-void keybinds::up_page(user_interface &ui) {
-	if (ui.page != ui.term_height) {
-		ui.page -= ui.term_height;
-		ui.curs_y = 0;
+void keybinds::up_page() {
+	if (ui->page != ui->term_height) {
+		ui->page -= ui->term_height;
+		ui->curs_y = 0;
 	}
 }
-void keybinds::down_page(user_interface &ui, const unsigned int current_dir_size_currently, 
+void keybinds::down_page(const unsigned int current_dir_size_currently, 
 		const size_t &current_dir_size) {
-	if (current_dir_size_currently % ui.term_height == 0 &&
-			current_dir_size > ui.term_height + 1) {
-		ui.page += ui.term_height;
-		ui.curs_y = 0;
+	if (current_dir_size_currently % ui->term_height == 0 &&
+			current_dir_size > ui->term_height + 1) {
+		ui->page += ui->term_height;
+		ui->curs_y = 0;
 	}
 }
-void keybinds::jump_to_line(user_interface &ui, const size_t &current_dir_size) {
-	std::string user_input = ui.input(" Jump To: ", 20, 4);
+void keybinds::jump_to_line(const size_t &current_dir_size) {
+	std::string user_input = ui->input(" Jump To: ", 20, 4);
 	try {
 		if (std::stoul(user_input) > 0 && std::stoul(user_input) <
 				current_dir_size + 1) {
-			ui.curs_y = std::stoi(user_input) % ui.term_height - 1;
-			if (std::stoul(user_input) == ui.term_height || ui.curs_y == -1) {
-				ui.curs_y = ui.term_height - 1;
+			ui->curs_y = std::stoi(user_input) % ui->term_height - 1;
+			if (std::stoul(user_input) == ui->term_height || ui->curs_y == -1) {
+				ui->curs_y = ui->term_height - 1;
 			}
-			ui.page = round_to(std::stoi(user_input), ui.term_height);
+			ui->page = round_to(std::stoi(user_input), ui->term_height);
 		}
 	}
 	catch (const std::invalid_argument &) {
-		ui.alert_box(" Not A Number ", 14, 750, 5);
+		ui->alert_box(" Not A Number ", 14, 750, 5);
 	}
 	catch (const std::out_of_range &) {
-		ui.alert_box(" Too large of a number ", 23, 750, 5);
+		ui->alert_box(" Too large of a number ", 23, 750, 5);
 	}
 }
 void keybinds::edit_text(const std::string &selected_filepath,
@@ -142,105 +141,105 @@ void keybinds::xdg_open(const std::string &selected_filepath, const size_t &curr
 		refresh();
 	}
 }
-void keybinds::remove(user_interface &ui, const std::string &selected_filepath) {
-	std::string user_input = ui.input(" Delete File/Directory? [y/N]: ", 33, 5);
+void keybinds::remove(const std::string &selected_filepath) {
+	std::string user_input = ui->input(" Delete File/Directory? [y/N]: ", 33, 5);
 	try {
 		if (std::filesystem::exists(selected_filepath) &&
 				(user_input == "Y" || user_input == "y")) {
 			std::filesystem::remove_all(selected_filepath);
-			ui.curs_y = 0;
-			ui.page = ui.term_height;
+			ui->curs_y = 0;
+			ui->page = ui->term_height;
 		}
 	}
 	catch (const std::filesystem::filesystem_error &) {
-		ui.alert_box(" Delete Failed ", 15, 750, 5);
+		ui->alert_box(" Delete Failed ", 15, 750, 5);
 	}
 }
-void keybinds::rename(user_interface &ui, const std::string &selected_filepath, 
+void keybinds::rename(const std::string &selected_filepath, 
 		const unsigned int current_dir_size_currently) {
 	if (current_dir_size_currently > 0) {
-		std::string user_input = ui.input(" Rename: ", 20, 4);
+		std::string user_input = ui->input(" Rename: ", 20, 4);
 		if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
 			try {
 				std::filesystem::rename(selected_filepath, user_input);
 			}
 			catch (const std::filesystem::filesystem_error &) {
-				ui.alert_box(" Invalid Filename ", 18, 750, 5);
+				ui->alert_box(" Invalid Filename ", 18, 750, 5);
 			}
 		}
 	}
 }
-void keybinds::copy(user_interface &ui, const std::string &selected_filepath, 
+void keybinds::copy(const std::string &selected_filepath, 
 		const unsigned int current_dir_size_currently) {
 	if (current_dir_size_currently > 0) {
 		copy_path = selected_filepath;
 		cut_path = false;
-		ui.alert_box((" Copied: " + file_io::path_to_filename(selected_filepath) + " ").c_str(),
+		ui->alert_box((" Copied: " + file_io::path_to_filename(selected_filepath) + " ").c_str(),
 				10 + file_io::path_to_filename(selected_filepath).size(), 500, 4);
 	}
 }
-void keybinds::cut(user_interface &ui, const std::string &selected_filepath) {
-	std::string user_input = ui.input(" Cut File/Directory? [y/N]: ", 30, 5);
+void keybinds::cut(const std::string &selected_filepath) {
+	std::string user_input = ui->input(" Cut File/Directory? [y/N]: ", 30, 5);
 	if (std::filesystem::exists(selected_filepath) &&
 			(user_input == "y" || user_input == "Y")) {
 		copy_path = selected_filepath;
 		cut_path = true;
 	}
 }
-void keybinds::paste(user_interface &ui, const std::string &current_path) {
+void keybinds::paste(const std::string &current_path) {
 	if (std::filesystem::exists(copy_path)) {
 		try {
 			std::filesystem::copy(copy_path, current_path + file_io::path_to_filename(copy_path),
 					std::filesystem::copy_options::recursive);
 			if (cut_path) {
-				ui.alert_box((" Cut: " + file_io::path_to_filename(copy_path) + " ").c_str(),
+				ui->alert_box((" Cut: " + file_io::path_to_filename(copy_path) + " ").c_str(),
 						7 + file_io::path_to_filename(copy_path).size(), 500, 4);
 				std::filesystem::remove_all(copy_path);
-				ui.curs_y = 0;
-				ui.page = ui.term_height;
+				ui->curs_y = 0;
+				ui->page = ui->term_height;
 				cut_path = false;
 			}
 			else {
-				ui.alert_box((" Pasted: " + file_io::path_to_filename(copy_path) + " ").c_str(),
+				ui->alert_box((" Pasted: " + file_io::path_to_filename(copy_path) + " ").c_str(),
 						10 + file_io::path_to_filename(copy_path).size(), 500, 4);
 			}
 		}
 		catch (std::exception& e) {
 			if (cut_path) {
-				ui.alert_box(" Cut Failed ", 12, 750, 5);
+				ui->alert_box(" Cut Failed ", 12, 750, 5);
 				cut_path = false;
 			}
 			else {
-				ui.alert_box(" Paste Failed ", 14, 750, 5);
+				ui->alert_box(" Paste Failed ", 14, 750, 5);
 			}
 		}
 	}
 }
-void keybinds::search(user_interface &ui) {
+void keybinds::search() {
 	if (search_str.empty()) {
-		std::string user_input = ui.input(" Search: ", 20, 4);
+		std::string user_input = ui->input(" Search: ", 20, 4);
 		if (!user_input.empty()) {
 			search_str = user_input;
-			ui.curs_y = 0;
-			ui.page = ui.term_height;
+			ui->curs_y = 0;
+			ui->page = ui->term_height;
 		}
 	}
 	else {
 		search_str = "";
-		ui.curs_y = 0;
-		ui.page = ui.term_height;
+		ui->curs_y = 0;
+		ui->page = ui->term_height;
 	}
 }
-void keybinds::screen_change(user_interface &ui, WINDOW *current_dir_win) {
-	const unsigned int win_resize_width = ui.draw_selected_path ? ui.scr_x : ui.scr_x / 2;
-	ui.draw_selected_path = !ui.draw_selected_path;
-	wresize(current_dir_win, ui.scr_y, win_resize_width);
+void keybinds::screen_change() {
+	const unsigned int win_resize_width = ui->draw_selected_path ? ui->scr_x : ui->scr_x / 2;
+	ui->draw_selected_path = !ui->draw_selected_path;
+	wresize(ui->current_dir_win, ui->scr_y, win_resize_width);
 }
-void keybinds::help(user_interface &ui, const unsigned int &update_speed) {
+void keybinds::help() {
 	const int help_win_y = 26;
 	const int help_win_x = 80;
-	WINDOW *help_win = newwin(help_win_y, help_win_x, ui.scr_y / 2 - help_win_y / 2,
-			ui.scr_x / 2 - help_win_x / 2);
+	WINDOW *help_win = newwin(help_win_y, help_win_x, ui->scr_y / 2 - help_win_y / 2,
+			ui->scr_x / 2 - help_win_x / 2);
 	mvwaddstr(help_win, 1, help_win_x / 2 - 5, "Keybinds:");
 	mvwaddstr(help_win, 3, 1, "\"q\" - Quit or exit");
 	mvwaddstr(help_win, 4, 1, "\"w\" or \"k\" or UP ARROW - Move cursor up");
@@ -268,5 +267,5 @@ void keybinds::help(user_interface &ui, const unsigned int &update_speed) {
 	timeout(-1);
 	getch();
 	delwin(help_win);
-	timeout(update_speed);
+	timeout(ui->update_speed);
 }

@@ -97,3 +97,19 @@ void user_interface::draw_window_title(const std::string &path, WINDOW *win) {
 		mvwaddstr(win, 0, scr_center, (" ... "));
 	}
 }
+void user_interface::check_resize() {
+	unsigned int check_scr_y, check_scr_x;
+	getmaxyx(stdscr, check_scr_y, check_scr_x);
+	if (check_scr_y != scr_y || check_scr_x != scr_x) { //check for screen resize
+		scr_y = check_scr_y;
+		scr_x = check_scr_x;
+		wresize(current_dir_win, scr_y, scr_x / 2);
+		if (!draw_selected_path) {
+			wresize(current_dir_win, scr_y, scr_x);
+		}
+		wresize(selected_dir_win, scr_y, scr_x / 2);
+		mvwin(selected_dir_win, 0, scr_x / 2);
+		term_height = scr_y - 2;
+		page = 1 * term_height;
+	}
+}
