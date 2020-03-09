@@ -127,7 +127,9 @@ int main(int argc, char *argv[]) {
 				case 'w':
 				case 'k':
 				case KEY_UP:
-					kb.move_up(current_dir_files.size());
+					if (current_dir_files.size() > 0) {
+						kb.move_up();
+					}
 					break;
 				case 's':
 				case 'j':
@@ -135,7 +137,9 @@ int main(int argc, char *argv[]) {
 					kb.move_down(current_dir_files.size(), current_dir_size);
 					break;
 				case 'm':
-					kb.jump_to_top();
+					if (current_dir_files.size() > 0) {
+						kb.jump_to_top();
+					}
 					break;
 				case 'n':
 					kb.jump_to_bottom(current_dir_files.size());
@@ -150,26 +154,38 @@ int main(int argc, char *argv[]) {
 					kb.jump_to_line(current_dir_size);
 					break;
 				case 'v':
-					kb.edit_text(selected_filepath, current_dir_size);
+					if (current_dir_files.size() > 0) {
+						kb.edit_text(selected_filepath);
+					}
 					break;
 				case 'u':
 					kb.spawn_shell();
 					break;
 				case 'i':
 				case '\n':
-					kb.xdg_open(selected_filepath, current_dir_size);
+					if (current_dir_files.size() > 0) {
+						kb.xdg_open(selected_filepath);
+					}
 					break;
 				case 'g':
-					kb.remove(selected_filepath);
+					if (current_dir_files.size() > 0) {
+						kb.remove(selected_filepath);
+					}
 					break;
 				case 'e':
-					kb.rename(selected_filepath, current_dir_files.size());
+					if (current_dir_files.size() > 0) {
+						kb.rename(selected_filepath);
+					}
 					break;
 				case 'c':
-					kb.copy(selected_filepath, current_dir_files.size());
+					if (current_dir_files.size() > 0) {
+						kb.copy(selected_filepath);
+					}
 					break;
 				case 'x':
-					kb.cut(selected_filepath);
+					if (current_dir_files.size() > 0) {
+						kb.cut(selected_filepath);
+					}
 					break;
 				case 'p':
 					kb.paste(current_path);

@@ -11,7 +11,7 @@ class keybinds {
 		std::string search_str;
 		void move_left();
 		void move_right(const std::string &selected_filepath);
-		void move_up(const unsigned int current_dir_size_currently);
+		void move_up();
 		void move_down(const unsigned int current_dir_size_currently, 
 				const size_t &current_dir_size);
 		void jump_to_top();
@@ -20,16 +20,12 @@ class keybinds {
 		void down_page(const unsigned int current_dir_size_currently, 
 				const size_t &current_dir_size);
 		void jump_to_line(const size_t &current_dir_size);
-		void edit_text(const std::string &selected_filepath,
-			       	const size_t &current_dir_size);
+		void edit_text(const std::string &selected_filepath);
 		void spawn_shell();
-		void xdg_open(const std::string &selected_filepath,
-			       	const size_t &current_dir_size);
+		void xdg_open(const std::string &selected_filepath);
 		void remove(const std::string &selected_filepath);
-		void rename(const std::string &selected_filepath, 
-				const unsigned int current_dir_size_currently);
-		void copy(const std::string &selected_filepath, 
-				const unsigned int current_dir_size_currently);
+		void rename(const std::string &selected_filepath);
+		void copy(const std::string &selected_filepath);
 		void cut(const std::string &selected_filepath);
 		void paste(const std::string &current_path);
 		void search();

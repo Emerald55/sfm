@@ -27,15 +27,13 @@ void keybinds::move_right(const std::string &selected_filepath) {
 		}
 	}
 }
-void keybinds::move_up(const unsigned int current_dir_size_currently) {
-	if (current_dir_size_currently > 0) {
-		if (ui->curs_y > 0) {
-			ui->curs_y -= 1;
-		}
-		else if (ui->page != ui->term_height) {
-			ui->curs_y = ui->term_height - 1;
-			ui->page -= ui->term_height;
-		}
+void keybinds::move_up() {
+	if (ui->curs_y > 0) {
+		ui->curs_y -= 1;
+	}
+	else if (ui->page != ui->term_height) {
+		ui->curs_y = ui->term_height - 1;
+		ui->page -= ui->term_height;
 	}
 }
 void keybinds::move_down(const unsigned int current_dir_size_currently, 
@@ -54,7 +52,9 @@ void keybinds::jump_to_top() {
 	ui->curs_y = 0;
 }
 void keybinds::jump_to_bottom(const unsigned int current_dir_size_currently) {
-	ui->curs_y = current_dir_size_currently - 1;
+	if (current_dir_size_currently > 0) {
+		ui->curs_y = current_dir_size_currently - 1;
+	}
 }
 void keybinds::up_page() {
 	if (ui->page != ui->term_height) {
@@ -89,26 +89,23 @@ void keybinds::jump_to_line(const size_t &current_dir_size) {
 		ui->alert_box(" Too large of a number ", 23, 750, 5);
 	}
 }
-void keybinds::edit_text(const std::string &selected_filepath,
-	       	const size_t &current_dir_size) {
-	if (current_dir_size != 0) {
-		def_prog_mode();
-		endwin();
-		pid_t pid = fork();
-		if (pid == 0) {
-			try {
-				const std::string editor = std::getenv("EDITOR");
-				execl(editor.c_str(), file_io::path_to_filename(editor).c_str(),
-						selected_filepath.c_str(), (char*)0);
-			}
-			catch (const std::exception &e) {
-				std::cout << "\"$EDITOR\" environmental variable not set.\n";
-			}
-			exit(1);
+void keybinds::edit_text(const std::string &selected_filepath) {
+	def_prog_mode();
+	endwin();
+	pid_t pid = fork();
+	if (pid == 0) {
+		try {
+			const std::string editor = std::getenv("EDITOR");
+			execl(editor.c_str(), file_io::path_to_filename(editor).c_str(),
+					selected_filepath.c_str(), (char*)0);
 		}
-		waitpid(pid, NULL, 0);
-		refresh();
+		catch (const std::exception &e) {
+			std::cout << "\"$EDITOR\" environmental variable not set.\n";
+		}
+		exit(1);
 	}
+	waitpid(pid, NULL, 0);
+	refresh();
 }
 void keybinds::spawn_shell() {
 	def_prog_mode();
@@ -127,19 +124,17 @@ void keybinds::spawn_shell() {
 	waitpid(pid, NULL, 0);
 	refresh();
 }
-void keybinds::xdg_open(const std::string &selected_filepath, const size_t &current_dir_size) {
-	if (current_dir_size != 0) {
-		def_prog_mode();
-		endwin();
-		pid_t pid = fork();
-		if (pid == 0) {
-			execl("/usr/bin/xdg-open", "xdg-open",
-					selected_filepath.c_str(), (char*)0);
-			exit(1);
-		}
-		waitpid(pid, NULL, 0);
-		refresh();
+void keybinds::xdg_open(const std::string &selected_filepath) {
+	def_prog_mode();
+	endwin();
+	pid_t pid = fork();
+	if (pid == 0) {
+		execl("/usr/bin/xdg-open", "xdg-open",
+				selected_filepath.c_str(), (char*)0);
+		exit(1);
 	}
+	waitpid(pid, NULL, 0);
+	refresh();
 }
 void keybinds::remove(const std::string &selected_filepath) {
 	std::string user_input = ui->input(" Delete File/Directory? [y/N]: ", 33, 5);
@@ -155,28 +150,22 @@ void keybinds::remove(const std::string &selected_filepath) {
 		ui->alert_box(" Delete Failed ", 15, 750, 5);
 	}
 }
-void keybinds::rename(const std::string &selected_filepath, 
-		const unsigned int current_dir_size_currently) {
-	if (current_dir_size_currently > 0) {
-		std::string user_input = ui->input(" Rename: ", 20, 4);
-		if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
-			try {
-				std::filesystem::rename(selected_filepath, user_input);
-			}
-			catch (const std::filesystem::filesystem_error &) {
-				ui->alert_box(" Invalid Filename ", 18, 750, 5);
-			}
+void keybinds::rename(const std::string &selected_filepath) {
+	std::string user_input = ui->input(" Rename: ", 20, 4);
+	if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
+		try {
+			std::filesystem::rename(selected_filepath, user_input);
+		}
+		catch (const std::filesystem::filesystem_error &) {
+			ui->alert_box(" Invalid Filename ", 18, 750, 5);
 		}
 	}
 }
-void keybinds::copy(const std::string &selected_filepath, 
-		const unsigned int current_dir_size_currently) {
-	if (current_dir_size_currently > 0) {
-		copy_path = selected_filepath;
-		cut_path = false;
-		ui->alert_box((" Copied: " + file_io::path_to_filename(selected_filepath) + " ").c_str(),
-				10 + file_io::path_to_filename(selected_filepath).size(), 500, 4);
-	}
+void keybinds::copy(const std::string &selected_filepath) {
+	copy_path = selected_filepath;
+	cut_path = false;
+	ui->alert_box((" Copied: " + file_io::path_to_filename(selected_filepath) + " ").c_str(),
+			10 + file_io::path_to_filename(selected_filepath).size(), 500, 4);
 }
 void keybinds::cut(const std::string &selected_filepath) {
 	std::string user_input = ui->input(" Cut File/Directory? [y/N]: ", 30, 5);
