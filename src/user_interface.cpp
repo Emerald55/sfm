@@ -47,10 +47,18 @@ void user_interface::draw_window_file_contents(const std::string &path, WINDOW *
 }
 void user_interface::draw_info(WINDOW *win, const unsigned int &page,
 	       	const unsigned int &current_dir_size) {
-	std::string line_info = " Line: " + std::to_string(curs_y + 1 + page - scr_y + 2)
-		+ "/" + std::to_string(current_dir_size) + " ";
-	std::string page_info = " Page: " + std::to_string(page / term_height) +
-		"/" + std::to_string(current_dir_size / term_height + 1) +  " ";
+	std::string line_info;
+	std::string page_info;
+	if (current_dir_size > 0) {
+		line_info = " Line: " + std::to_string(curs_y + 1 + page - scr_y + 2)
+			+ "/" + std::to_string(current_dir_size) + " ";
+		page_info = " Page: " + std::to_string(page / term_height) +
+			"/" + std::to_string(current_dir_size / term_height + 1) +  " ";
+	}
+	else {
+		line_info = " Line: 0/0 ";
+		page_info = " Page: 0/0 ";
+	}
 	const unsigned int offset = draw_selected_path ? scr_x / 2 : scr_x;
 	mvwaddstr(win, scr_y - 1, offset - line_info.size() - page_info.size() - 5,
 		       	line_info.c_str());
