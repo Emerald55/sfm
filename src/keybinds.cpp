@@ -178,7 +178,7 @@ void keybinds::cut(const std::string &selected_filepath) {
 void keybinds::paste(const std::string &current_path) {
 	if (std::filesystem::exists(copy_path)) {
 		try {
-			std::filesystem::copy(copy_path, current_path + file_io::path_to_filename(copy_path),
+			std::filesystem::copy(copy_path, current_path + "/" + file_io::path_to_filename(copy_path),
 					std::filesystem::copy_options::recursive);
 			if (cut_path) {
 				ui->alert_box((" Cut: " + file_io::path_to_filename(copy_path) + " ").c_str(),

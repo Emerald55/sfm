@@ -41,7 +41,7 @@ class user_interface {
 			       	const unsigned int &alert_color);
 		void check_resize();
 	private:
-		void draw_window_title(const std::string &path, WINDOW *win);
+		void draw_window_title(std::string path, WINDOW *win);
 };
 
 #endif

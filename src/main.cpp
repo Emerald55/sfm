@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 		for (;;) {
 			ui.check_resize();
 			std::string current_path = std::filesystem::current_path().string();
-			if (current_path != "/") { current_path += "/"; }
+			//if (current_path != "/") { current_path += "/"; }
 			std::vector<std::string> current_dir_files = file_io::get_dir_files(current_path, argc,
 				       	argv, kb.search_str);
 			std::sort(current_dir_files.begin(), current_dir_files.end());

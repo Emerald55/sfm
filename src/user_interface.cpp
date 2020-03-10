@@ -90,11 +90,14 @@ void user_interface::alert_box(const char* text, const unsigned int &win_width,
 	std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 	delwin(alert_win);
 }
-void user_interface::draw_window_title(const std::string &path, WINDOW *win) {
+void user_interface::draw_window_title(std::string path, WINDOW *win) {
 	const unsigned int scr_center = draw_selected_path ? scr_x / 4 : scr_x / 2;
 	const unsigned int win_width = draw_selected_path ? scr_x / 2 - 2 : scr_x - 2;
-	std::string cut_down_path = std::filesystem::is_directory(path) ? path.substr(0, path.size() - 1) : path;
-	cut_down_path = cut_down_path.substr(cut_down_path.find_last_of("/\\") + 1);
+	std::string cut_down_path = file_io::path_to_filename(path);
+	if (std::filesystem::is_directory(path) && path != "/") {
+		path += "/";
+		cut_down_path += "/";
+	}
 	if (path.size() < win_width) {
 		mvwaddstr(win, 0, scr_center - (path.size() / 2), (" " + path + " ").c_str());
 	}
