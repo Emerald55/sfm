@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
 		std::cout << "	-p /start/path    Path to start program from\n";
 	}
 	else {
+		setlocale(LC_ALL, "");
 		initscr();
 		user_interface ui;
 		keybinds kb(&ui);

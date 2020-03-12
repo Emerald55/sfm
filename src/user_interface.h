@@ -13,7 +13,6 @@ class user_interface {
 		const unsigned int update_speed = 100;
 		user_interface() {
 			getmaxyx(stdscr, scr_y, scr_x);
-			setlocale(LC_ALL, "");
 			start_color();
 			init_pair(1, COLOR_WHITE, COLOR_RED); //cursor
 			init_pair(2, COLOR_YELLOW, COLOR_BLACK); //directories
