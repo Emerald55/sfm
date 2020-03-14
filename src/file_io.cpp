@@ -9,7 +9,7 @@
 #include <fstream>
 #include "file_io.h"
 
-std::vector<std::string> file_io::get_dir_files(const std::string &path, const int &argc, char* argv[], 
+std::vector<std::string> file_io::get_dir_files(const std::string &path, int argc, char* argv[], 
 		const std::string &search_str) {
 	std::vector<std::string> files;
 	for (const auto &entry : std::filesystem::directory_iterator(path)) {
@@ -34,7 +34,7 @@ std::vector<std::string> file_io::get_dir_files(const std::string &path, const i
 	return files;
 }
 std::vector<std::string> file_io::file_contents(const std::string &path,
-	       	const unsigned int &term_height) {
+	       	unsigned int term_height) {
 	std::ifstream file(path);
 	std::vector<std::string> contents;
 	if (file) {

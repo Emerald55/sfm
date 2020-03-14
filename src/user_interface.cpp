@@ -27,7 +27,7 @@ user_interface::user_interface() {
 }
 
 void user_interface::draw_window_files(const std::string &path, const std::vector<std::string> &files, WINDOW *win, 
-		const int &argc, char* argv[], const bool &draw_curs) {
+		int argc, char* argv[], bool draw_curs) {
 	for (size_t i = 0; i < files.size(); i++) {
 		std::string file = file_io::path_to_filename(files[i]);
 		std::string num_format = std::to_string(i + page - scr_y + 3) + ".";
@@ -64,8 +64,8 @@ void user_interface::draw_window_file_contents(const std::string &path, WINDOW *
 	box(win, 0, 0);
 	draw_window_title(path, win);
 }
-void user_interface::draw_info(WINDOW *win, const unsigned int &page,
-	       	const unsigned int &current_dir_size) {
+void user_interface::draw_info(WINDOW *win, unsigned int page,
+	       	unsigned int current_dir_size) {
 	std::string line_info;
 	std::string page_info;
 	if (current_dir_size > 0) {
@@ -83,8 +83,8 @@ void user_interface::draw_info(WINDOW *win, const unsigned int &page,
 		       	line_info.c_str());
 	mvwaddstr(win, scr_y - 1, offset - page_info.size() - 2, page_info.c_str());
 }
-std::string user_interface::input(const char* text, const unsigned int &win_width,
-	       	const unsigned int &color_type) {
+std::string user_interface::input(const char* text, unsigned int win_width,
+	       	unsigned int color_type) {
 	curs_set(1);
 	WINDOW *input_win = newwin(1, win_width, scr_y - 1, 2);
 	wattron(input_win, COLOR_PAIR(color_type));
@@ -99,8 +99,8 @@ std::string user_interface::input(const char* text, const unsigned int &win_widt
 	delwin(input_win);
 	return std::string(user_input);
 }
-void user_interface::alert_box(const char* text, const unsigned int &win_width,
-	       	const unsigned int &sleep_time, const unsigned int &alert_color) {
+void user_interface::alert_box(const char* text, unsigned int win_width,
+	       	unsigned int sleep_time, unsigned int alert_color) {
 	WINDOW *alert_win = newwin(1, win_width, scr_y - 1, 2);
 	wattron(alert_win, COLOR_PAIR(alert_color)); //5
 	mvwaddstr(alert_win, 0, 0, text);

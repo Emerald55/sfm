@@ -40,8 +40,8 @@ void keybinds::move_up() {
 		ui->page -= ui->term_height;
 	}
 }
-void keybinds::move_down(const unsigned int current_dir_size_currently, 
-		const size_t &current_dir_size) {
+void keybinds::move_down(unsigned int current_dir_size_currently, 
+		size_t current_dir_size) {
 	if (current_dir_size_currently > 0) {
 		if (static_cast<unsigned>(ui->curs_y) < current_dir_size_currently - 1) {
 			ui->curs_y += 1;
@@ -55,7 +55,7 @@ void keybinds::move_down(const unsigned int current_dir_size_currently,
 void keybinds::jump_to_top() {
 	ui->curs_y = 0;
 }
-void keybinds::jump_to_bottom(const unsigned int current_dir_size_currently) {
+void keybinds::jump_to_bottom(unsigned int current_dir_size_currently) {
 	if (current_dir_size_currently > 0) {
 		ui->curs_y = current_dir_size_currently - 1;
 	}
@@ -66,15 +66,15 @@ void keybinds::up_page() {
 		ui->curs_y = 0;
 	}
 }
-void keybinds::down_page(const unsigned int current_dir_size_currently, 
-		const size_t &current_dir_size) {
+void keybinds::down_page(unsigned int current_dir_size_currently, 
+		size_t current_dir_size) {
 	if (current_dir_size_currently % ui->term_height == 0 &&
 			current_dir_size > ui->term_height + 1) {
 		ui->page += ui->term_height;
 		ui->curs_y = 0;
 	}
 }
-void keybinds::jump_to_line(const size_t &current_dir_size) {
+void keybinds::jump_to_line(size_t current_dir_size) {
 	std::string user_input = ui->input(" Jump To: ", 20, 4);
 	try {
 		if (std::stoul(user_input) > 0 && std::stoul(user_input) <
