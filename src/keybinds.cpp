@@ -8,6 +8,10 @@
 #include "file_io.h"
 #include "keybinds.h"
 
+keybinds::keybinds(user_interface *ui) {
+	this->ui = ui;
+}
+
 void keybinds::move_left() {
 	ui->curs_y = 0;
 	ui->page = ui->term_height;
@@ -100,7 +104,7 @@ void keybinds::edit_text(const std::string &selected_filepath) {
 					selected_filepath.c_str(), (char*)0);
 		}
 		catch (const std::exception &e) {
-			std::cout << "\"$EDITOR\" environmental variable not set.\n";
+			std::cerr << "\"$EDITOR\" environmental variable not set.\n";
 		}
 		exit(1);
 	}
@@ -117,7 +121,7 @@ void keybinds::spawn_shell() {
 			execl(shell.c_str(), file_io::path_to_filename(shell).c_str(), (char*)0);
 		}
 		catch (const std::exception &e) {
-			std::cout << "\"$SHELL\" environmental variable not set.\n";
+			std::cerr << "\"$SHELL\" environmental variable not set.\n";
 		}
 		exit(1);
 	}

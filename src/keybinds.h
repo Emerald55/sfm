@@ -5,9 +5,7 @@
 class keybinds {
 	public:
 		user_interface *ui;
-		keybinds(user_interface *ui) {
-			this->ui = ui;
-		}
+		keybinds(user_interface *ui);
 		std::string search_str;
 		void move_left();
 		void move_right(const std::string &selected_filepath);

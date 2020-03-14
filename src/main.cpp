@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
 		if (std::string(argv[i]) == "-p") {
 			errno = chdir(argv[i + 1]);
 			if (errno == -1) {
-				std::cout << "Could Not Find And/Or Enter Directory, Exiting...\n";
+				std::cerr << "Could Not Find And/Or Enter Directory, Exiting...\n";
 				return 0;
 			}
 			break;
