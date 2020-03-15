@@ -55,6 +55,7 @@ void user_interface::draw_window_files(const std::string &path, const std::vecto
 	box(win, 0, 0);
 	draw_window_title(path, win);
 }
+
 void user_interface::draw_window_file_contents(const std::string &path, WINDOW *win, 
 		std::vector<std::string> file_contents) {
 	for (size_t i = 0; i < file_contents.size(); i++) {
@@ -64,6 +65,7 @@ void user_interface::draw_window_file_contents(const std::string &path, WINDOW *
 	box(win, 0, 0);
 	draw_window_title(path, win);
 }
+
 void user_interface::draw_info(WINDOW *win, unsigned int page,
 	       	unsigned int current_dir_size) {
 	std::string line_info;
@@ -83,6 +85,7 @@ void user_interface::draw_info(WINDOW *win, unsigned int page,
 		       	line_info.c_str());
 	mvwaddstr(win, scr_y - 1, offset - page_info.size() - 2, page_info.c_str());
 }
+
 std::string user_interface::input(const char* text, unsigned int win_width,
 	       	unsigned int color_type) {
 	curs_set(1);
@@ -99,16 +102,18 @@ std::string user_interface::input(const char* text, unsigned int win_width,
 	delwin(input_win);
 	return std::string(user_input);
 }
+
 void user_interface::alert_box(const char* text, unsigned int win_width,
 	       	unsigned int sleep_time, unsigned int alert_color) {
 	WINDOW *alert_win = newwin(1, win_width, scr_y - 1, 2);
-	wattron(alert_win, COLOR_PAIR(alert_color)); //5
+	wattron(alert_win, COLOR_PAIR(alert_color));
 	mvwaddstr(alert_win, 0, 0, text);
 	wattroff(alert_win, COLOR_PAIR(alert_color));
 	wrefresh(alert_win);
 	std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
 	delwin(alert_win);
 }
+
 void user_interface::draw_window_title(std::string path, WINDOW *win) {
 	const unsigned int scr_center = draw_selected_path ? scr_x / 4 : scr_x / 2;
 	const unsigned int win_width = draw_selected_path ? scr_x / 2 - 2 : scr_x - 2;
@@ -127,10 +132,12 @@ void user_interface::draw_window_title(std::string path, WINDOW *win) {
 		mvwaddstr(win, 0, scr_center, (" ... "));
 	}
 }
+
 void user_interface::check_resize() {
 	unsigned int check_scr_y, check_scr_x;
 	getmaxyx(stdscr, check_scr_y, check_scr_x);
-	if (check_scr_y != scr_y || check_scr_x != scr_x) { //check for screen resize
+	if ((check_scr_y != scr_y || check_scr_x != scr_x) &&
+		       	check_scr_y > 2 && check_scr_x > 2) { //check for screen resize
 		scr_y = check_scr_y;
 		scr_x = check_scr_x;
 		wresize(current_dir_win, scr_y, scr_x / 2);

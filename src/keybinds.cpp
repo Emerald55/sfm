@@ -12,12 +12,21 @@ keybinds::keybinds(user_interface *ui) {
 	this->ui = ui;
 }
 
+bool keybinds::quit() {
+	std::string user_input = ui->input(" Quit? [Y/n]: ", 16, 5);
+	if (user_input.empty() || user_input == "y" || user_input == "Y") {
+		return false;
+	}
+	return true;
+}
+
 void keybinds::move_left() {
 	ui->curs_y = 0;
 	ui->page = ui->term_height;
 	search_str = "";
 	chdir("..");
 }
+
 void keybinds::move_right(const std::string &selected_filepath) {
 	if (std::filesystem::is_directory(selected_filepath)) {
 		int err = chdir(selected_filepath.c_str());
@@ -31,6 +40,7 @@ void keybinds::move_right(const std::string &selected_filepath) {
 		}
 	}
 }
+
 void keybinds::move_up() {
 	if (ui->curs_y > 0) {
 		ui->curs_y -= 1;
@@ -40,6 +50,7 @@ void keybinds::move_up() {
 		ui->page -= ui->term_height;
 	}
 }
+
 void keybinds::move_down(unsigned int current_dir_size_currently, 
 		size_t current_dir_size) {
 	if (current_dir_size_currently > 0) {
@@ -52,20 +63,20 @@ void keybinds::move_down(unsigned int current_dir_size_currently,
 		}
 	}
 }
-void keybinds::jump_to_top() {
-	ui->curs_y = 0;
-}
+
 void keybinds::jump_to_bottom(unsigned int current_dir_size_currently) {
 	if (current_dir_size_currently > 0) {
 		ui->curs_y = current_dir_size_currently - 1;
 	}
 }
+
 void keybinds::up_page() {
 	if (ui->page != ui->term_height) {
 		ui->page -= ui->term_height;
 		ui->curs_y = 0;
 	}
 }
+
 void keybinds::down_page(unsigned int current_dir_size_currently, 
 		size_t current_dir_size) {
 	if (current_dir_size_currently % ui->term_height == 0 &&
@@ -74,6 +85,7 @@ void keybinds::down_page(unsigned int current_dir_size_currently,
 		ui->curs_y = 0;
 	}
 }
+
 void keybinds::jump_to_line(size_t current_dir_size) {
 	std::string user_input = ui->input(" Jump To: ", 20, 4);
 	try {
@@ -93,6 +105,7 @@ void keybinds::jump_to_line(size_t current_dir_size) {
 		ui->alert_box(" Too large of a number ", 23, 750, 5);
 	}
 }
+
 void keybinds::edit_text(const std::string &selected_filepath) {
 	def_prog_mode();
 	endwin();
@@ -111,6 +124,7 @@ void keybinds::edit_text(const std::string &selected_filepath) {
 	waitpid(pid, NULL, 0);
 	refresh();
 }
+
 void keybinds::spawn_shell() {
 	def_prog_mode();
 	endwin();
@@ -128,6 +142,7 @@ void keybinds::spawn_shell() {
 	waitpid(pid, NULL, 0);
 	refresh();
 }
+
 void keybinds::xdg_open(const std::string &selected_filepath) {
 	def_prog_mode();
 	endwin();
@@ -140,6 +155,7 @@ void keybinds::xdg_open(const std::string &selected_filepath) {
 	waitpid(pid, NULL, 0);
 	refresh();
 }
+
 void keybinds::remove(const std::string &selected_filepath) {
 	std::string user_input = ui->input(" Delete File/Directory? [y/N]: ", 33, 5);
 	try {
@@ -154,6 +170,7 @@ void keybinds::remove(const std::string &selected_filepath) {
 		ui->alert_box(" Delete Failed ", 15, 750, 5);
 	}
 }
+
 void keybinds::rename(const std::string &selected_filepath) {
 	std::string user_input = ui->input(" Rename: ", 20, 4);
 	if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
@@ -165,12 +182,14 @@ void keybinds::rename(const std::string &selected_filepath) {
 		}
 	}
 }
+
 void keybinds::copy(const std::string &selected_filepath) {
 	copy_path = selected_filepath;
 	cut_path = false;
 	ui->alert_box((" Copied: " + file_io::path_to_filename(selected_filepath) + " ").c_str(),
 			10 + file_io::path_to_filename(selected_filepath).size(), 500, 4);
 }
+
 void keybinds::cut(const std::string &selected_filepath) {
 	std::string user_input = ui->input(" Cut File/Directory? [y/N]: ", 30, 5);
 	if (std::filesystem::exists(selected_filepath) &&
@@ -179,6 +198,7 @@ void keybinds::cut(const std::string &selected_filepath) {
 		cut_path = true;
 	}
 }
+
 void keybinds::paste(const std::string &current_path) {
 	if (std::filesystem::exists(copy_path)) {
 		try {
@@ -208,6 +228,7 @@ void keybinds::paste(const std::string &current_path) {
 		}
 	}
 }
+
 void keybinds::search() {
 	if (search_str.empty()) {
 		std::string user_input = ui->input(" Search: ", 20, 4);
@@ -223,11 +244,13 @@ void keybinds::search() {
 		ui->page = ui->term_height;
 	}
 }
+
 void keybinds::screen_change() {
 	const unsigned int win_resize_width = ui->draw_selected_path ? ui->scr_x : ui->scr_x / 2;
 	ui->draw_selected_path = !ui->draw_selected_path;
 	wresize(ui->current_dir_win, ui->scr_y, win_resize_width);
 }
+
 void keybinds::help() {
 	const int help_win_y = 26;
 	const int help_win_x = 80;

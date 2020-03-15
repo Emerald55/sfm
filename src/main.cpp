@@ -52,7 +52,8 @@ int main(int argc, char *argv[]) {
 		initscr();
 		user_interface ui;
 		keybinds kb(&ui);
-		for (;;) {
+		bool is_running = true;
+		while (is_running) {
 			ui.check_resize();
 			std::string current_path = std::filesystem::current_path().string();
 			std::vector<std::string> current_dir_files = file_io::get_dir_files(current_path, argc,
@@ -107,13 +108,10 @@ int main(int argc, char *argv[]) {
 			}
 			wrefresh(ui.current_dir_win);
 			wchar_t input = getch();
-			if (input == 'q') { //quit
-				std::string user_input = ui.input(" Quit? [Y/n]: ", 16, 5);
-				if (user_input.empty() || user_input == "y" || user_input == "Y") {
-					break;
-				}
-			}
 			switch (input) {
+				case 'q':
+					is_running = kb.quit();
+					break;
 				case 'a':
 				case 'h':
 				case KEY_LEFT:
@@ -138,7 +136,7 @@ int main(int argc, char *argv[]) {
 					break;
 				case 'm':
 					if (current_dir_files.size() > 0) {
-						kb.jump_to_top();
+						ui.curs_y = 0;
 					}
 					break;
 				case 'n':

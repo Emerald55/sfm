@@ -33,6 +33,7 @@ std::vector<std::string> file_io::get_dir_files(const std::string &path, int arg
 	}
 	return files;
 }
+
 std::vector<std::string> file_io::file_contents(const std::string &path,
 	       	unsigned int term_height) {
 	std::ifstream file(path);
@@ -53,6 +54,7 @@ std::vector<std::string> file_io::file_contents(const std::string &path,
 	file.close();
 	return contents;
 }
+
 std::string file_io::get_permbits(const std::string &current_filename) {
 	struct stat st;
 	std::string file_perms = " ";

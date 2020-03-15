@@ -7,12 +7,12 @@ class keybinds {
 		user_interface *ui;
 		keybinds(user_interface *ui);
 		std::string search_str;
+		bool quit();
 		void move_left();
 		void move_right(const std::string &selected_filepath);
 		void move_up();
 		void move_down(unsigned int current_dir_size_currently, 
 				size_t current_dir_size);
-		void jump_to_top();
 		void jump_to_bottom(unsigned int current_dir_size_currently);
 		void up_page();
 		void down_page(unsigned int current_dir_size_currently, 
