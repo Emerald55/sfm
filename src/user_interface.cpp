@@ -52,7 +52,6 @@ void user_interface::draw_window_files(const std::string &path, const std::vecto
 		wattroff(win, COLOR_PAIR(1));
 		wattroff(win, COLOR_PAIR(2));
 	}
-	box(win, 0, 0);
 	draw_window_title(path, win);
 }
 
@@ -62,12 +61,10 @@ void user_interface::draw_window_file_contents(const std::string &path, WINDOW *
 		if (i > term_height - 1) { break; }
 		mvwaddnstr(win, i + 1, 1, file_contents[i].c_str(), scr_x / 2 - 2);
 	}
-	box(win, 0, 0);
 	draw_window_title(path, win);
 }
 
-void user_interface::draw_info(WINDOW *win, unsigned int page,
-	       	unsigned int current_dir_size) {
+void user_interface::info(WINDOW* win, unsigned int current_dir_size, const std::string &current_filepath) {
 	std::string line_info;
 	std::string page_info;
 	if (current_dir_size > 0) {
@@ -81,8 +78,10 @@ void user_interface::draw_info(WINDOW *win, unsigned int page,
 		page_info = " Page: 0/0 ";
 	}
 	const unsigned int offset = draw_selected_path ? scr_x / 2 : scr_x;
-	mvwaddstr(win, scr_y - 1, offset - line_info.size() - page_info.size() - 5,
-		       	line_info.c_str());
+	const std::string owner_and_perm_bits = file_io::get_permbits(current_filepath);
+	mvwaddstr(win, scr_y - 1, offset - owner_and_perm_bits.size() - line_info.size() -
+		       	page_info.size() - 8, owner_and_perm_bits.c_str());
+	mvwaddstr(win, scr_y - 1, offset - line_info.size() - page_info.size() - 5, line_info.c_str());
 	mvwaddstr(win, scr_y - 1, offset - page_info.size() - 2, page_info.c_str());
 }
 

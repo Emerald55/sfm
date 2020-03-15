@@ -7,7 +7,16 @@
 #include <filesystem>
 #include <ncurses.h>
 #include <fstream>
+#include <algorithm>
 #include "file_io.h"
+
+file_io::file_io(const std::string &current_path,
+	       	int argc, char* argv[], const std::string &search_str) {
+	this->current_path = current_path;
+	current_dir_files = get_dir_files(current_path, argc, argv, search_str);
+	current_dir_size = current_dir_files.size();
+	std::sort(current_dir_files.begin(), current_dir_files.end());
+}
 
 std::vector<std::string> file_io::get_dir_files(const std::string &path, int argc, char* argv[], 
 		const std::string &search_str) {
@@ -55,10 +64,10 @@ std::vector<std::string> file_io::file_contents(const std::string &path,
 	return contents;
 }
 
-std::string file_io::get_permbits(const std::string &current_filename) {
+std::string file_io::get_permbits(const std::string &current_filepath) {
 	struct stat st;
 	std::string file_perms = " ";
-	if (stat(current_filename.c_str(), &st) == 0) {
+	if (stat(current_filepath.c_str(), &st) == 0) {
 		mode_t perm = st.st_mode;
 		file_perms += (perm & S_IRUSR) ? 'r' : '-';
 		file_perms += (perm & S_IWUSR) ? 'w' : '-';
@@ -69,7 +78,7 @@ std::string file_io::get_permbits(const std::string &current_filename) {
 		file_perms += (perm & S_IROTH) ? 'r' : '-';
 		file_perms += (perm & S_IWOTH) ? 'w' : '-';
 		file_perms += (perm & S_IXOTH) ? 'x' : '-';
-		stat(current_filename.c_str(), &st);
+		stat(current_filepath.c_str(), &st);
 		struct passwd *pwd;
 		pwd = getpwuid(st.st_uid);
 		file_perms = file_perms + " " + pwd->pw_name + " ";
