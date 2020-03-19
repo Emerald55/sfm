@@ -55,6 +55,11 @@ std::vector<std::string> file_io::file_contents(const std::string &path,
 			while ((pos = line.find("\t")) != std::string::npos) {
 				line.replace(pos, 1, "    "); //convert tabs to space for counting
 			}
+			if (line.find('\0') != std::string::npos) { //check for null bytes in binary
+				contents.clear();
+				contents.push_back("Potential binary output hidden");
+				break;
+			}
 			contents.push_back(line);
 			if (i > term_height) { break; }
 			i++;

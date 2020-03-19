@@ -12,16 +12,14 @@ class user_interface {
 		WINDOW *selected_dir_win;
 		const unsigned int update_speed = 100;
 		user_interface();
-		void draw_window_files(const std::string &path, const std::vector<std::string> &files, WINDOW *win, 
+		void draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
 				int argc, char* argv[], bool draw_curs = false);
-		void draw_window_file_contents(const std::string &path, WINDOW *win,
-			       	std::vector<std::string> file_contents);
-		void info(WINDOW *win, unsigned int current_dir_size, const std::string &current_filepath);
+		void draw_window_file_contents(WINDOW *win, std::vector<std::string> file_contents);
+		void draw_info(WINDOW *win, unsigned int current_dir_size, const std::string &current_filepath);
 		std::string input(const char* text, unsigned int win_width, unsigned int color_type);
 		void alert_box(const char* text, unsigned int win_width, unsigned int sleep_time,
 			       	unsigned int alert_color);
 		void check_resize();
-	private:
 		void draw_window_title(std::string path, WINDOW *win);
 };
 

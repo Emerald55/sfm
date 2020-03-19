@@ -26,7 +26,7 @@ user_interface::user_interface() {
 	page = 1 * term_height;
 }
 
-void user_interface::draw_window_files(const std::string &path, const std::vector<std::string> &files, WINDOW *win, 
+void user_interface::draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
 		int argc, char* argv[], bool draw_curs) {
 	for (size_t i = 0; i < files.size(); i++) {
 		std::string file = file_io::path_to_filename(files[i]);
@@ -52,19 +52,17 @@ void user_interface::draw_window_files(const std::string &path, const std::vecto
 		wattroff(win, COLOR_PAIR(1));
 		wattroff(win, COLOR_PAIR(2));
 	}
-	draw_window_title(path, win);
 }
 
-void user_interface::draw_window_file_contents(const std::string &path, WINDOW *win, 
+void user_interface::draw_window_file_contents(WINDOW *win, 
 		std::vector<std::string> file_contents) {
 	for (size_t i = 0; i < file_contents.size(); i++) {
 		if (i > term_height - 1) { break; }
 		mvwaddnstr(win, i + 1, 1, file_contents[i].c_str(), scr_x / 2 - 2);
 	}
-	draw_window_title(path, win);
 }
 
-void user_interface::info(WINDOW* win, unsigned int current_dir_size, const std::string &current_filepath) {
+void user_interface::draw_info(WINDOW* win, unsigned int current_dir_size, const std::string &current_filepath) {
 	std::string line_info;
 	std::string page_info;
 	if (current_dir_size > 0) {

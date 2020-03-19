@@ -77,24 +77,25 @@ int main(int argc, char *argv[]) {
 			werase(ui.selected_dir_win);
 			box(ui.current_dir_win, 0, 0);
 			std::vector<std::string> file_content;
-			ui.draw_window_files(fio.current_path, fio.current_dir_files, ui.current_dir_win, argc, argv, true);
+			ui.draw_window_files(fio.current_dir_files, ui.current_dir_win, argc, argv, true);
+			ui.draw_window_title(fio.current_path, ui.current_dir_win);
 			if (file_contents_printable(fio.selected_filepath) && ui.draw_selected_path) {
 				file_content = fio.file_contents(fio.selected_filepath, ui.term_height);
 			}
 			if (ui.draw_selected_path) {
 				box(ui.selected_dir_win, 0, 0);
 				if (file_content.empty()) {
-					ui.draw_window_files(fio.selected_filepath, fio.selected_dir_files, ui.selected_dir_win,
-						       	argc, argv);
+					ui.draw_window_files(fio.selected_dir_files, ui.selected_dir_win, argc, argv);
 				}
 				else {
-					ui.draw_window_file_contents(fio.selected_filepath, ui.selected_dir_win, file_content);
+					ui.draw_window_file_contents(ui.selected_dir_win, file_content);
 				}
-				ui.info(ui.selected_dir_win, fio.current_dir_size, fio.selected_filepath);
+				ui.draw_window_title(fio.selected_filepath, ui.selected_dir_win);
+				ui.draw_info(ui.selected_dir_win, fio.current_dir_size, fio.selected_filepath);
 				wrefresh(ui.selected_dir_win);
 			}
 			else {
-				ui.info(ui.current_dir_win, fio.current_dir_size, fio.selected_filepath);
+				ui.draw_info(ui.current_dir_win, fio.current_dir_size, fio.selected_filepath);
 			}
 			wrefresh(ui.current_dir_win);
 			wchar_t input = getch();
