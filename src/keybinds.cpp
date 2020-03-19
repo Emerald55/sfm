@@ -89,7 +89,7 @@ void keybinds::down_page(unsigned int current_dir_size_currently,
 void keybinds::jump_to_line(size_t current_dir_size) {
 	std::string user_input = ui->input(" Jump To: ", 20, 4);
 	try {
-		if (std::stoul(user_input) > 0 && std::stoul(user_input) <
+		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <
 				current_dir_size + 1) {
 			ui->curs_y = std::stoi(user_input) % ui->term_height - 1;
 			if (std::stoul(user_input) == ui->term_height || ui->curs_y == -1) {
@@ -252,8 +252,8 @@ void keybinds::screen_change() {
 }
 
 void keybinds::help() {
-	const int help_win_y = 26;
-	const int help_win_x = 80;
+	const unsigned int help_win_y = 26;
+	const unsigned int help_win_x = 80;
 	WINDOW *help_win = newwin(help_win_y, help_win_x, ui->scr_y / 2 - help_win_y / 2,
 			ui->scr_x / 2 - help_win_x / 2);
 	mvwaddstr(help_win, 1, help_win_x / 2 - 5, "Keybinds:");
@@ -263,7 +263,7 @@ void keybinds::help() {
 	mvwaddstr(help_win, 6, 1, "\"a\" or \"h\" or LEFT ARROW - Move back a directory");
 	mvwaddstr(help_win, 7, 1, "\"d\" or \"l\" or RIGHT ARROW - Move into a directory");
 	mvwaddstr(help_win, 8, 1, "\";\" - Split screen toggle");
-	mvwaddstr(help_win, 9, 1, "SPACEBAR - Jump to specific line number");
+	mvwaddstr(help_win, 9, 1, "SPACEBAR - Jump to specific line number (leave empty to cancel)");
 	mvwaddstr(help_win, 10, 1, "\"=\" - Go forward a page");
 	mvwaddstr(help_win, 11, 1, "\"-\" - Go back a page");
 	mvwaddstr(help_win, 12, 1, "\"m\" - Jump to top of current page");
