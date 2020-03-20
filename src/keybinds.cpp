@@ -125,6 +125,25 @@ void keybinds::edit_text(const std::string &selected_filepath) {
 	reset_prog_mode();
 }
 
+void keybinds::pager(const std::string &selected_filepath) {
+	def_prog_mode();
+	endwin();
+	pid_t pid = fork();
+	if (pid == 0) {
+		try {
+			const std::string pager = std::getenv("PAGER");
+			execl(pager.c_str(), file_io::path_to_filename(pager).c_str(), 
+				       selected_filepath.c_str(), (char*)0);
+		}
+		catch (const std::exception &e) {
+			std::cerr << "\"$PAGER\" environmental variable not set.\n";
+		}
+		exit(1);
+	}
+	waitpid(pid, NULL, 0);
+	reset_prog_mode();
+}
+
 void keybinds::spawn_shell() {
 	def_prog_mode();
 	endwin();
@@ -252,7 +271,7 @@ void keybinds::screen_change() {
 }
 
 void keybinds::help() {
-	const unsigned int help_win_y = 26;
+	const unsigned int help_win_y = 27;
 	const unsigned int help_win_x = 80;
 	WINDOW *help_win = newwin(help_win_y, help_win_x, ui->scr_y / 2 - help_win_y / 2,
 			ui->scr_x / 2 - help_win_x / 2);
@@ -268,16 +287,17 @@ void keybinds::help() {
 	mvwaddstr(help_win, 11, 1, "\"-\" - Go back a page");
 	mvwaddstr(help_win, 12, 1, "\"m\" - Jump to top of current page");
 	mvwaddstr(help_win, 13, 1, "\"n\" - Jump to bottom of current page");
-	mvwaddstr(help_win, 14, 1, "\"i\" or ENTER - Open selected item with xdg-open");
-	mvwaddstr(help_win, 15, 1, "\"u\" - Spawn interactive shell");
-	mvwaddstr(help_win, 16, 1, "\"v\" - Edit file or folder with default editor");
-	mvwaddstr(help_win, 17, 1, "\"b\" - Search for file or folder (press again to stop)");
-	mvwaddstr(help_win, 18, 1, "\"e\" - Rename file or folder (leave empty to cancel)");
-	mvwaddstr(help_win, 19, 1, "\"g\" - Delete file or folder");
-	mvwaddstr(help_win, 20, 1, "\"c\" - Copy a file or folder");
-	mvwaddstr(help_win, 21, 1, "\"p\" - Paste a file or folder");
-	mvwaddstr(help_win, 22, 1, "\"x\" - Cut a file or folder (deletes after paste rather than before)");
-	mvwaddstr(help_win, 24, 1, "Press any key to exit help menu...");
+	mvwaddstr(help_win, 14, 1, "\"i\" or ENTER - Open file or folder with xdg-open");
+	mvwaddstr(help_win, 15, 1, "\"y\" - Open file or folder with pager");
+	mvwaddstr(help_win, 16, 1, "\"u\" - Spawn interactive shell");
+	mvwaddstr(help_win, 17, 1, "\"v\" - Edit file or folder with default editor");
+	mvwaddstr(help_win, 18, 1, "\"b\" - Search for file or folder (press again to stop)");
+	mvwaddstr(help_win, 19, 1, "\"e\" - Rename file or folder (leave empty to cancel)");
+	mvwaddstr(help_win, 20, 1, "\"g\" - Delete file or folder");
+	mvwaddstr(help_win, 21, 1, "\"c\" - Copy a file or folder");
+	mvwaddstr(help_win, 22, 1, "\"p\" - Paste a file or folder");
+	mvwaddstr(help_win, 23, 1, "\"x\" - Cut a file or folder (deletes after paste rather than before)");
+	mvwaddstr(help_win, 25, 1, "Press any key to exit help menu...");
 	box(help_win, 0, 0);
 	wrefresh(help_win);
 	timeout(-1);

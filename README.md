@@ -9,4 +9,4 @@ cd sfm
 sudo make install
 sfm
 ```
-Make sure to have $EDITOR and $SHELL environmental variables set.
+Make sure to have $EDITOR, $SHELL, and $PAGER environmental variables set.

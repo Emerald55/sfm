@@ -147,6 +147,11 @@ int main(int argc, char *argv[]) {
 						kb.edit_text(fio.selected_filepath);
 					}
 					break;
+				case 'y':
+					if (fio.current_dir_files.size() > 0) {
+						kb.pager(fio.selected_filepath);
+					}
+					break;
 				case 'u':
 					kb.spawn_shell();
 					break;
