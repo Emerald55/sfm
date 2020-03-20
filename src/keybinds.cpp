@@ -122,7 +122,7 @@ void keybinds::edit_text(const std::string &selected_filepath) {
 		exit(1);
 	}
 	waitpid(pid, NULL, 0);
-	refresh();
+	reset_prog_mode();
 }
 
 void keybinds::spawn_shell() {
@@ -140,7 +140,7 @@ void keybinds::spawn_shell() {
 		exit(1);
 	}
 	waitpid(pid, NULL, 0);
-	refresh();
+	reset_prog_mode();
 }
 
 void keybinds::xdg_open(const std::string &selected_filepath) {
@@ -153,7 +153,7 @@ void keybinds::xdg_open(const std::string &selected_filepath) {
 		exit(1);
 	}
 	waitpid(pid, NULL, 0);
-	refresh();
+	reset_prog_mode();
 }
 
 void keybinds::remove(const std::string &selected_filepath) {
