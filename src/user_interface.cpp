@@ -23,7 +23,7 @@ user_interface::user_interface() {
 	current_dir_win = newwin(scr_y, scr_x, 0, 0);
 	selected_dir_win = newwin(0, 0, 0, scr_x / 2);
 	term_height = scr_y - 2;
-	page = 1 * term_height;
+	page = term_height;
 }
 
 void user_interface::draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
@@ -144,6 +144,6 @@ void user_interface::check_resize() {
 		wresize(selected_dir_win, scr_y, scr_x / 2);
 		mvwin(selected_dir_win, 0, scr_x / 2);
 		term_height = scr_y - 2;
-		page = 1 * term_height;
+		page = term_height;
 	}
 }
