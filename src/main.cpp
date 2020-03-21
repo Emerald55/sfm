@@ -53,6 +53,7 @@ int main(int argc, char *argv[]) {
 		user_interface ui;
 		keybinds kb(&ui);
 		bool is_running = true;
+		timeout(0); //draw window first time instantly
 		while (is_running) {
 			file_io fio(std::filesystem::current_path().string(), argc, argv, kb.search_str);
 			ui.check_resize();
@@ -99,6 +100,7 @@ int main(int argc, char *argv[]) {
 			}
 			wrefresh(ui.current_dir_win);
 			wchar_t input = getch();
+			timeout(ui.update_speed);
 			switch (input) {
 				case 'q':
 					is_running = kb.quit();

@@ -19,7 +19,6 @@ user_interface::user_interface() {
 	noecho();
 	curs_set(0);
 	keypad(stdscr, true);
-	timeout(update_speed);
 	current_dir_win = newwin(scr_y, scr_x, 0, 0);
 	selected_dir_win = newwin(0, 0, 0, scr_x / 2);
 	term_height = scr_y - 2;
