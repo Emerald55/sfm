@@ -10,7 +10,7 @@ class user_interface {
 		bool draw_selected_path = false;
 		WINDOW *current_dir_win;
 		WINDOW *selected_dir_win;
-		const unsigned int update_speed = 100;
+		const unsigned int update_speed = 250;
 		user_interface();
 		void draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
 				int argc, char* argv[], bool draw_curs = false);
