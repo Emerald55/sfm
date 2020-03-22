@@ -13,7 +13,7 @@ keybinds::keybinds(user_interface *ui) {
 }
 
 bool keybinds::quit() {
-	std::string user_input = ui->input(" Quit? [Y/n]: ", 16, 5);
+	std::string user_input = ui->input(" Quit? [Y/n]: ", 5, 2);
 	if (user_input.empty() || user_input == "y" || user_input == "Y") {
 		return false;
 	}
@@ -87,7 +87,7 @@ void keybinds::down_page(unsigned int current_dir_size_currently,
 }
 
 void keybinds::jump_to_line(size_t current_dir_size) {
-	std::string user_input = ui->input(" Jump To: ", 20, 4);
+	std::string user_input = ui->input(" Jump To: ", 4, 10);
 	try {
 		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <
 				current_dir_size + 1) {
@@ -176,7 +176,7 @@ void keybinds::xdg_open(const std::string &selected_filepath) {
 }
 
 void keybinds::remove(const std::string &selected_filepath) {
-	std::string user_input = ui->input(" Delete File/Directory? [y/N]: ", 33, 5);
+	std::string user_input = ui->input(" Delete File/Directory? [y/N]: ", 5, 2);
 	try {
 		if (std::filesystem::exists(selected_filepath) &&
 				(user_input == "Y" || user_input == "y")) {
@@ -191,7 +191,7 @@ void keybinds::remove(const std::string &selected_filepath) {
 }
 
 void keybinds::rename(const std::string &selected_filepath) {
-	std::string user_input = ui->input(" Rename: ", 20, 4);
+	std::string user_input = ui->input(" Rename: ", 4);
 	if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
 		try {
 			std::filesystem::rename(selected_filepath, user_input);
@@ -210,7 +210,7 @@ void keybinds::copy(const std::string &selected_filepath) {
 }
 
 void keybinds::cut(const std::string &selected_filepath) {
-	std::string user_input = ui->input(" Cut File/Directory? [y/N]: ", 30, 5);
+	std::string user_input = ui->input(" Cut File/Directory? [y/N]: ", 5, 2);
 	if (std::filesystem::exists(selected_filepath) &&
 			(user_input == "y" || user_input == "Y")) {
 		copy_path = selected_filepath;
@@ -250,7 +250,7 @@ void keybinds::paste(const std::string &current_path) {
 
 void keybinds::search() {
 	if (search_str.empty()) {
-		std::string user_input = ui->input(" Search: ", 20, 4);
+		std::string user_input = ui->input(" Search: ", 4);
 		if (!user_input.empty()) {
 			search_str = user_input;
 			ui->curs_y = 0;

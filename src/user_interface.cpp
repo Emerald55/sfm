@@ -82,25 +82,37 @@ void user_interface::draw_info(WINDOW* win, unsigned int current_dir_size, const
 	mvwaddstr(win, scr_y - 1, offset - page_info.size() - 2, page_info.c_str());
 }
 
-std::string user_interface::input(const char* text, unsigned int win_width,
-	       	unsigned int color_type) {
+std::string user_interface::input(const std::string &text, unsigned int color_type, 
+		unsigned int win_width) {
+	WINDOW *input_text_win = newwin(1, text.size(), scr_y - 1, 2);
+	wattron(input_text_win, COLOR_PAIR(color_type));
+	waddstr(input_text_win, text.c_str());
+	wattroff(input_text_win, COLOR_PAIR(color_type));
+	wrefresh(input_text_win);
+	WINDOW *input_win = newwin(1, win_width, scr_y - 1, 2 + text.size());
 	curs_set(1);
-	WINDOW *input_win = newwin(1, win_width, scr_y - 1, 2);
-	wattron(input_win, COLOR_PAIR(color_type));
-	mvwaddstr(input_win, 0, 0, text);
-	wattroff(input_win, COLOR_PAIR(color_type));
+	scrollok(input_win, 1);
 	echo();
-	char user_input[win_width];
-	wgetnstr(input_win, user_input, win_width);
+	nocbreak();
+	std::string user_input;
+	for (;;) {
+		const char input_char = wgetch(input_win);
+		if (input_char == ERR || input_char == '\n') {
+			break;
+		}
+		user_input += input_char;
+	}
+	cbreak();
 	noecho();
 	wrefresh(input_win);
 	curs_set(0);
 	delwin(input_win);
-	return std::string(user_input);
+	delwin(input_text_win);
+	return user_input;
 }
 
-void user_interface::alert_box(const char* text, unsigned int win_width,
-	       	unsigned int sleep_time, unsigned int alert_color) {
+void user_interface::alert_box(const char* text, unsigned int win_width, 
+		unsigned int sleep_time, unsigned int alert_color) {
 	WINDOW *alert_win = newwin(1, win_width, scr_y - 1, 2);
 	wattron(alert_win, COLOR_PAIR(alert_color));
 	mvwaddstr(alert_win, 0, 0, text);
