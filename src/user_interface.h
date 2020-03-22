@@ -14,7 +14,8 @@ class user_interface {
 		user_interface();
 		void draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
 				int argc, char* argv[], bool draw_curs = false);
-		void draw_window_file_contents(WINDOW *win, std::vector<std::string> file_contents);
+		void draw_window_file_contents(WINDOW *win, std::vector<std::string> file_contents,
+			       	bool contents_printable);
 		void draw_info(WINDOW *win, unsigned int current_dir_size, const std::string &current_filepath);
 		std::string input(const std::string &text, unsigned int color_type, unsigned int win_width = 15);
 		void alert_box(const char* text, unsigned int win_width, unsigned int sleep_time,

@@ -9,17 +9,6 @@
 #include "user_interface.h"
 #include "file_io.h"
 
-inline bool file_contents_printable(const std::string &path) {
-	if (std::filesystem::is_directory(path) ||
-		       	std::filesystem::is_block_file(path) ||
-		       	std::filesystem::is_character_file(path) ||
-		       	std::filesystem::is_fifo(path) ||
-		       	std::filesystem::is_socket(path)) {
-		return false;
-	}
-	return true;
-}
-
 bool check_for_flag(int argc, char* argv[], const std::string &flag) {
 	for (int i = 0; i < argc; i++) {
 		if (flag == std::string(argv[i])) {
@@ -80,16 +69,17 @@ int main(int argc, char *argv[]) {
 			std::vector<std::string> file_content;
 			ui.draw_window_files(fio.current_dir_files, ui.current_dir_win, argc, argv, true);
 			ui.draw_window_title(fio.current_path, ui.current_dir_win);
-			if (file_contents_printable(fio.selected_filepath) && ui.draw_selected_path) {
+			fio.contents_printable = fio.file_contents_printable(fio.selected_filepath);
+			if (fio.contents_printable && ui.draw_selected_path) {
 				file_content = fio.file_contents(fio.selected_filepath, ui.term_height);
 			}
 			if (ui.draw_selected_path) {
 				box(ui.selected_dir_win, 0, 0);
-				if (file_content.empty()) {
+				if (std::filesystem::is_directory(fio.selected_filepath)) {
 					ui.draw_window_files(fio.selected_dir_files, ui.selected_dir_win, argc, argv);
 				}
 				else {
-					ui.draw_window_file_contents(ui.selected_dir_win, file_content);
+					ui.draw_window_file_contents(ui.selected_dir_win, file_content, fio.contents_printable);
 				}
 				ui.draw_window_title(fio.selected_filepath, ui.selected_dir_win);
 				ui.draw_info(ui.selected_dir_win, fio.current_dir_size, fio.selected_filepath);

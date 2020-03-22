@@ -6,6 +6,7 @@ bool check_for_flag(int argc, char* argv[], const std::string &flag);
 
 class file_io {
 	public:
+		bool contents_printable = true;
 		std::string selected_filepath = "?";
 		std::string current_path;
 		std::vector<std::string> current_dir_files; //left window
@@ -21,6 +22,16 @@ class file_io {
 			       	char* argv[], const std::string &search_str = "");
 		std::vector<std::string> file_contents(const std::string &path, unsigned int term_height);
 		static std::string get_permbits(const std::string &current_filepath);
+		inline bool file_contents_printable(const std::string &path) {
+			if (std::filesystem::is_directory(path) ||
+					std::filesystem::is_block_file(path) ||
+					std::filesystem::is_character_file(path) ||
+					std::filesystem::is_fifo(path) ||
+					std::filesystem::is_socket(path)) {
+				return false;
+			}
+			return true;
+		}
 };
 
 #endif

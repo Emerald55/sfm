@@ -57,7 +57,7 @@ std::vector<std::string> file_io::file_contents(const std::string &path,
 			}
 			if (line.find('\0') != std::string::npos) { //check for null bytes in binary
 				contents.clear();
-				contents.push_back("Potential binary output hidden");
+				contents_printable = false;
 				break;
 			}
 			contents.push_back(line);

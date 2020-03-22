@@ -14,7 +14,7 @@ user_interface::user_interface() {
 	init_pair(2, COLOR_YELLOW, COLOR_BLACK); //directories
 	init_pair(3, COLOR_CYAN, COLOR_BLACK); //line numbers
 	init_pair(4, COLOR_GREEN, COLOR_BLACK); //green input box
-	init_pair(5, COLOR_RED, COLOR_BLACK); //red input box
+	init_pair(5, COLOR_RED, COLOR_BLACK); //red input box and unprintable warning
 	cbreak();
 	noecho();
 	curs_set(0);
@@ -54,10 +54,17 @@ void user_interface::draw_window_files(const std::vector<std::string> &files, WI
 }
 
 void user_interface::draw_window_file_contents(WINDOW *win, 
-		std::vector<std::string> file_contents) {
-	for (size_t i = 0; i < file_contents.size(); i++) {
-		if (i > term_height - 1) { break; }
-		mvwaddnstr(win, i + 1, 1, file_contents[i].c_str(), scr_x / 2 - 2);
+		std::vector<std::string> file_contents, bool contents_printable) {
+	if (!contents_printable) {
+		wattron(win, COLOR_PAIR(5));
+		mvwaddnstr(win, 1, 1, "*** Contents unprintable ***", scr_x / 2 - 2);
+		wattroff(win, COLOR_PAIR(5));
+	}
+	else {
+		for (size_t i = 0; i < file_contents.size(); i++) {
+			if (i > term_height - 1) { break; }
+			mvwaddnstr(win, i + 1, 1, file_contents[i].c_str(), scr_x / 2 - 2);
+		}
 	}
 }
 
