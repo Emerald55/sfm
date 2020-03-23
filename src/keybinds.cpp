@@ -51,22 +51,22 @@ void keybinds::move_up() {
 	}
 }
 
-void keybinds::move_down(unsigned int current_dir_size_currently, 
-		size_t current_dir_size) {
-	if (current_dir_size_currently > 0) {
-		if (static_cast<unsigned>(ui->curs_y) < current_dir_size_currently - 1) {
+void keybinds::move_down(unsigned int left_pane_size_currently, 
+		size_t left_pane_size) {
+	if (left_pane_size_currently > 0) {
+		if (static_cast<unsigned>(ui->curs_y) < left_pane_size_currently - 1) {
 			ui->curs_y += 1;
 		}
-		else if ((ui->curs_y + 1 + ui->page - ui->scr_y + 2) != current_dir_size) {
+		else if ((ui->curs_y + 1 + ui->page - ui->scr_y + 2) != left_pane_size) {
 			ui->page += ui->term_height;
 			ui->curs_y = 0;
 		}
 	}
 }
 
-void keybinds::jump_to_bottom(unsigned int current_dir_size_currently) {
-	if (current_dir_size_currently > 0) {
-		ui->curs_y = current_dir_size_currently - 1;
+void keybinds::jump_to_bottom(unsigned int left_pane_size_currently) {
+	if (left_pane_size_currently > 0) {
+		ui->curs_y = left_pane_size_currently - 1;
 	}
 }
 
@@ -77,20 +77,20 @@ void keybinds::up_page() {
 	}
 }
 
-void keybinds::down_page(unsigned int current_dir_size_currently, 
-		size_t current_dir_size) {
-	if (current_dir_size_currently % ui->term_height == 0 &&
-			current_dir_size > ui->term_height + 1) {
+void keybinds::down_page(unsigned int left_pane_size_currently, 
+		size_t left_pane_size) {
+	if (left_pane_size_currently % ui->term_height == 0 &&
+			left_pane_size > ui->term_height + 1) {
 		ui->page += ui->term_height;
 		ui->curs_y = 0;
 	}
 }
 
-void keybinds::jump_to_line(size_t current_dir_size) {
+void keybinds::jump_to_line(size_t left_pane_size) {
 	std::string user_input = ui->input(" Jump To: ", 4, 10);
 	try {
 		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <
-				current_dir_size + 1) {
+				left_pane_size + 1) {
 			ui->curs_y = std::stoi(user_input) % ui->term_height - 1;
 			if (std::stoul(user_input) == ui->term_height || ui->curs_y == -1) {
 				ui->curs_y = ui->term_height - 1;
@@ -267,7 +267,7 @@ void keybinds::search() {
 void keybinds::screen_change() {
 	const unsigned int win_resize_width = ui->draw_selected_path ? ui->scr_x : ui->scr_x / 2;
 	ui->draw_selected_path = !ui->draw_selected_path;
-	wresize(ui->current_dir_win, ui->scr_y, win_resize_width);
+	wresize(ui->left_pane, ui->scr_y, win_resize_width);
 }
 
 void keybinds::help() {

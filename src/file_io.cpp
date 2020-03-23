@@ -13,9 +13,9 @@
 file_io::file_io(const std::string &current_path,
 	       	bool show_hidden_files, const std::string &search_str) {
 	this->current_path = current_path;
-	current_dir_files = get_dir_files(current_path, show_hidden_files, search_str);
-	current_dir_size = current_dir_files.size();
-	std::sort(current_dir_files.begin(), current_dir_files.end());
+	left_pane_files = get_dir_files(current_path, show_hidden_files, search_str);
+	left_pane_size = left_pane_files.size();
+	std::sort(left_pane_files.begin(), left_pane_files.end());
 }
 
 std::vector<std::string> file_io::get_dir_files(const std::string &path, bool show_hidden_files, 
@@ -43,7 +43,7 @@ std::vector<std::string> file_io::get_dir_files(const std::string &path, bool sh
 	return files;
 }
 
-std::vector<std::string> file_io::file_contents(const std::string &path,
+std::vector<std::string> file_io::get_file_contents(const std::string &path,
 	       	unsigned int term_height) {
 	std::ifstream file(path);
 	std::vector<std::string> contents;

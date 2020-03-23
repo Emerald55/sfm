@@ -8,8 +8,8 @@ class user_interface {
 		unsigned int term_height;
 		unsigned int page;
 		bool draw_selected_path = false;
-		WINDOW *current_dir_win;
-		WINDOW *selected_dir_win;
+		WINDOW *left_pane;
+		WINDOW *right_pane;
 		const unsigned int update_speed = 250;
 		user_interface();
 		void draw_window_files(const std::vector<std::string> &files, WINDOW *win, 

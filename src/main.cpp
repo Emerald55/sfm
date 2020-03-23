@@ -56,49 +56,49 @@ int main(int argc, char *argv[]) {
 	while (is_running && start_program) {
 		file_io fio(std::filesystem::current_path().string(), show_hidden_files, kb.search_str);
 		ui.check_resize();
-		if (fio.current_dir_size != 0) {
+		if (fio.left_pane_size != 0) {
 			const int page_floor = ui.page - ui.term_height;
-			fio.current_dir_files.erase(fio.current_dir_files.begin(),
-					fio.current_dir_files.begin() + page_floor); //trim before page
-			if (fio.current_dir_size > ui.page) {
-				fio.current_dir_files.erase(fio.current_dir_files.begin() + ui.page - page_floor,
-						fio.current_dir_files.end()); //trim after
+			fio.left_pane_files.erase(fio.left_pane_files.begin(),
+					fio.left_pane_files.begin() + page_floor); //trim before page
+			if (fio.left_pane_size > ui.page) {
+				fio.left_pane_files.erase(fio.left_pane_files.begin() + ui.page - page_floor,
+						fio.left_pane_files.end()); //trim after
 			}
-			fio.selected_filepath = fio.current_dir_files[ui.curs_y];
+			fio.selected_filepath = fio.left_pane_files[ui.curs_y];
 			try {
 				if (std::filesystem::is_directory(fio.selected_filepath) && ui.draw_selected_path) {
-					fio.selected_dir_files = fio.get_dir_files(fio.selected_filepath, show_hidden_files);
-					std::sort(fio.selected_dir_files.begin(), fio.selected_dir_files.end());
+					fio.right_pane_files = fio.get_dir_files(fio.selected_filepath, show_hidden_files);
+					std::sort(fio.right_pane_files.begin(), fio.right_pane_files.end());
 				}
 			}
 			catch (const std::filesystem::filesystem_error &) {} //no permission to read contents
 		}
-		werase(ui.current_dir_win);
-		werase(ui.selected_dir_win);
-		box(ui.current_dir_win, 0, 0);
+		werase(ui.left_pane);
+		werase(ui.right_pane);
+		box(ui.left_pane, 0, 0);
 		std::vector<std::string> file_content;
-		ui.draw_window_files(fio.current_dir_files, ui.current_dir_win, show_symbolic_links, true);
-		ui.draw_window_title(fio.current_path, ui.current_dir_win);
+		ui.draw_window_files(fio.left_pane_files, ui.left_pane, show_symbolic_links, true);
+		ui.draw_window_title(fio.current_path, ui.left_pane);
 		fio.contents_printable = fio.file_contents_printable(fio.selected_filepath);
 		if (fio.contents_printable && ui.draw_selected_path) {
-			file_content = fio.file_contents(fio.selected_filepath, ui.term_height);
+			file_content = fio.get_file_contents(fio.selected_filepath, ui.term_height);
 		}
 		if (ui.draw_selected_path) {
-			box(ui.selected_dir_win, 0, 0);
+			box(ui.right_pane, 0, 0);
 			if (std::filesystem::is_directory(fio.selected_filepath)) {
-				ui.draw_window_files(fio.selected_dir_files, ui.selected_dir_win, show_symbolic_links);
+				ui.draw_window_files(fio.right_pane_files, ui.right_pane, show_symbolic_links);
 			}
 			else {
-				ui.draw_window_file_contents(ui.selected_dir_win, file_content, fio.contents_printable);
+				ui.draw_window_file_contents(ui.right_pane, file_content, fio.contents_printable);
 			}
-			ui.draw_window_title(fio.selected_filepath, ui.selected_dir_win);
-			ui.draw_info(ui.selected_dir_win, fio.current_dir_size, fio.selected_filepath);
-			wrefresh(ui.selected_dir_win);
+			ui.draw_window_title(fio.selected_filepath, ui.right_pane);
+			ui.draw_info(ui.right_pane, fio.left_pane_size, fio.selected_filepath);
+			wrefresh(ui.right_pane);
 		}
 		else {
-			ui.draw_info(ui.current_dir_win, fio.current_dir_size, fio.selected_filepath);
+			ui.draw_info(ui.left_pane, fio.left_pane_size, fio.selected_filepath);
 		}
-		wrefresh(ui.current_dir_win);
+		wrefresh(ui.left_pane);
 		wchar_t input = getch();
 		timeout(ui.update_speed);
 		switch (input) {
@@ -118,39 +118,39 @@ int main(int argc, char *argv[]) {
 			case 'w':
 			case 'k':
 			case KEY_UP:
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.move_up();
 				}
 				break;
 			case 's':
 			case 'j':
 			case KEY_DOWN:
-				kb.move_down(fio.current_dir_files.size(), fio.current_dir_size);
+				kb.move_down(fio.left_pane_files.size(), fio.left_pane_size);
 				break;
 			case 'm':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					ui.curs_y = 0;
 				}
 				break;
 			case 'n':
-				kb.jump_to_bottom(fio.current_dir_files.size());
+				kb.jump_to_bottom(fio.left_pane_files.size());
 				break;
 			case '-':
 				kb.up_page();
 				break;
 			case '=':
-				kb.down_page(fio.current_dir_files.size(), fio.current_dir_size);
+				kb.down_page(fio.left_pane_files.size(), fio.left_pane_size);
 				break;
 			case ' ':
-				kb.jump_to_line(fio.current_dir_size);
+				kb.jump_to_line(fio.left_pane_size);
 				break;
 			case 'v':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.edit_text(fio.selected_filepath);
 				}
 				break;
 			case 'y':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.pager(fio.selected_filepath);
 				}
 				break;
@@ -159,27 +159,27 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'i':
 			case '\n':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.xdg_open(fio.selected_filepath);
 				}
 				break;
 			case 'g':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.remove(fio.selected_filepath);
 				}
 				break;
 			case 'e':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.rename(fio.selected_filepath);
 				}
 				break;
 			case 'c':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.copy(fio.selected_filepath);
 				}
 				break;
 			case 'x':
-				if (fio.current_dir_files.size() > 0) {
+				if (fio.left_pane_files.size() > 0) {
 					kb.cut(fio.selected_filepath);
 				}
 				break;

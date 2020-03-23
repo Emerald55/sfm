@@ -19,8 +19,8 @@ user_interface::user_interface() {
 	noecho();
 	curs_set(0);
 	keypad(stdscr, true);
-	current_dir_win = newwin(scr_y, scr_x, 0, 0);
-	selected_dir_win = newwin(0, 0, 0, scr_x / 2);
+	left_pane = newwin(scr_y, scr_x, 0, 0);
+	right_pane = newwin(0, 0, 0, scr_x / 2);
 	term_height = scr_y - 2;
 	page = term_height;
 }
@@ -155,12 +155,12 @@ void user_interface::check_resize() {
 		       	check_scr_y > 2 && check_scr_x > 2) { //check for screen resize
 		scr_y = check_scr_y;
 		scr_x = check_scr_x;
-		wresize(current_dir_win, scr_y, scr_x / 2);
+		wresize(left_pane, scr_y, scr_x / 2);
 		if (!draw_selected_path) {
-			wresize(current_dir_win, scr_y, scr_x);
+			wresize(left_pane, scr_y, scr_x);
 		}
-		wresize(selected_dir_win, scr_y, scr_x / 2);
-		mvwin(selected_dir_win, 0, scr_x / 2);
+		wresize(right_pane, scr_y, scr_x / 2);
+		mvwin(right_pane, 0, scr_x / 2);
 		term_height = scr_y - 2;
 		page = term_height;
 	}

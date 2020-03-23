@@ -11,13 +11,13 @@ class keybinds {
 		void move_left();
 		void move_right(const std::string &selected_filepath);
 		void move_up();
-		void move_down(unsigned int current_dir_size_currently, 
-				size_t current_dir_size);
-		void jump_to_bottom(unsigned int current_dir_size_currently);
+		void move_down(unsigned int left_pane_size_currently, 
+				size_t left_pane_size);
+		void jump_to_bottom(unsigned int left_pane_size_currently);
 		void up_page();
-		void down_page(unsigned int current_dir_size_currently, 
-				size_t current_dir_size);
-		void jump_to_line(size_t current_dir_size);
+		void down_page(unsigned int left_pane_size_currently, 
+				size_t left_pane_size);
+		void jump_to_line(size_t left_pane_size);
 		void edit_text(const std::string &selected_filepath);
 		void pager(const std::string &selected_filepath);
 		void spawn_shell();

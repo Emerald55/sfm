@@ -7,9 +7,9 @@ class file_io {
 		bool contents_printable = true;
 		std::string selected_filepath = "?";
 		std::string current_path;
-		std::vector<std::string> current_dir_files; //left window
-		size_t current_dir_size; //size before erasing part of the vector
-		std::vector<std::string> selected_dir_files; //right window
+		size_t left_pane_size; //size before erasing part of the vector
+		std::vector<std::string> left_pane_files;
+		std::vector<std::string> right_pane_files;
 		file_io(const std::string &current_path,
 			       	bool show_hidden_files, const std::string &search_str);
 		inline static std::string path_to_filename(const std::string &path) {
@@ -18,7 +18,7 @@ class file_io {
 		}
 		std::vector<std::string> get_dir_files(const std::string &path, bool show_hidden_files,
 			       	const std::string &search_str = "");
-		std::vector<std::string> file_contents(const std::string &path, unsigned int term_height);
+		std::vector<std::string> get_file_contents(const std::string &path, unsigned int term_height);
 		static std::string get_permbits(const std::string &current_filepath);
 		inline bool file_contents_printable(const std::string &path) {
 			if (std::filesystem::is_directory(path) ||
