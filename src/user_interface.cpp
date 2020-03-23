@@ -46,7 +46,7 @@ void user_interface::draw_window_files(const std::vector<std::string> &files, WI
 			file += " -> ";
 			file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
 		}
-		const unsigned int current_scr_size = draw_selected_path ? scr_x / 2 - 2 : scr_x;
+		const unsigned int current_scr_size = draw_selected_path ? scr_x / 2 - 2 : scr_x - 2;
 		mvwaddnstr(win, i + 1, 2 + num_format.size(), file.c_str(), current_scr_size - num_format.size() - 1);
 		wattroff(win, COLOR_PAIR(1));
 		wattroff(win, COLOR_PAIR(2));
