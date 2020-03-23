@@ -26,7 +26,7 @@ user_interface::user_interface() {
 }
 
 void user_interface::draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
-		int argc, char* argv[], bool draw_curs) {
+		bool show_symbolic_links, bool draw_curs) {
 	for (size_t i = 0; i < files.size(); i++) {
 		std::string file = file_io::path_to_filename(files[i]);
 		std::string num_format = std::to_string(i + page - scr_y + 3) + ".";
@@ -42,7 +42,7 @@ void user_interface::draw_window_files(const std::vector<std::string> &files, WI
 		if (i == static_cast<unsigned>(curs_y) && draw_curs) { //highlight file where cursor is
 			wattron(win, COLOR_PAIR(1));
 		}
-		if (std::filesystem::is_symlink(files[i]) && check_for_flag(argc, argv, "-s")) {
+		if (show_symbolic_links && std::filesystem::is_symlink(files[i])) {
 			file += " -> ";
 			file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
 		}

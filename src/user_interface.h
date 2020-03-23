@@ -13,7 +13,7 @@ class user_interface {
 		const unsigned int update_speed = 250;
 		user_interface();
 		void draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
-				int argc, char* argv[], bool draw_curs = false);
+				bool show_symbolic_links, bool draw_curs = false);
 		void draw_window_file_contents(WINDOW *win, std::vector<std::string> file_contents,
 			       	bool contents_printable);
 		void draw_info(WINDOW *win, unsigned int current_dir_size, const std::string &current_filepath);

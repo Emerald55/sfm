@@ -11,27 +11,27 @@
 #include "file_io.h"
 
 file_io::file_io(const std::string &current_path,
-	       	int argc, char* argv[], const std::string &search_str) {
+	       	bool show_hidden_files, const std::string &search_str) {
 	this->current_path = current_path;
-	current_dir_files = get_dir_files(current_path, argc, argv, search_str);
+	current_dir_files = get_dir_files(current_path, show_hidden_files, search_str);
 	current_dir_size = current_dir_files.size();
 	std::sort(current_dir_files.begin(), current_dir_files.end());
 }
 
-std::vector<std::string> file_io::get_dir_files(const std::string &path, int argc, char* argv[], 
+std::vector<std::string> file_io::get_dir_files(const std::string &path, bool show_hidden_files, 
 		const std::string &search_str) {
 	std::vector<std::string> files;
 	for (const auto &entry : std::filesystem::directory_iterator(path)) {
 		bool was_pushed = false;
-		if (!check_for_flag(argc, argv, "-a")) {
+		if (show_hidden_files) {
+			files.push_back(entry.path());
+			was_pushed = true;
+		}
+		else {
 			if (path_to_filename(entry.path().string()).rfind(".", 0) != 0) {
 				files.push_back(entry.path());
 				was_pushed = true;
 			}
-		}
-		else {
-			files.push_back(entry.path());
-			was_pushed = true;
 		}
 		if (was_pushed && !search_str.empty()) {
 			if (path_to_filename(entry.path().string()).find(search_str) ==
