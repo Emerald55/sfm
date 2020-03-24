@@ -46,7 +46,7 @@ void user_interface::draw_window_files(const std::vector<std::string> &files, WI
 			file += " -> ";
 			file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
 		}
-		const unsigned int current_scr_size = draw_selected_path ? scr_x / 2 - 2 : scr_x - 2;
+		const unsigned int current_scr_size = draw_right_pane ? scr_x / 2 - 2 : scr_x - 2;
 		mvwaddnstr(win, i + 1, 2 + num_format.size(), file.c_str(), current_scr_size - num_format.size() - 1);
 		wattroff(win, COLOR_PAIR(1));
 		wattroff(win, COLOR_PAIR(2));
@@ -81,7 +81,7 @@ void user_interface::draw_info(WINDOW* win, unsigned int current_dir_size, const
 		line_info = " Line: 0/0 ";
 		page_info = " Page: 0/0 ";
 	}
-	const unsigned int offset = draw_selected_path ? scr_x / 2 : scr_x;
+	const unsigned int offset = draw_right_pane ? scr_x / 2 : scr_x;
 	const std::string owner_and_perm_bits = file_io::get_permbits(current_filepath);
 	mvwaddstr(win, scr_y - 1, offset - owner_and_perm_bits.size() - line_info.size() -
 		       	page_info.size() - 8, owner_and_perm_bits.c_str());
@@ -130,8 +130,8 @@ void user_interface::alert_box(const char* text, unsigned int win_width,
 }
 
 void user_interface::draw_window_title(std::string path, WINDOW *win) {
-	const unsigned int scr_center = draw_selected_path ? scr_x / 4 : scr_x / 2;
-	const unsigned int win_width = draw_selected_path ? scr_x / 2 - 2 : scr_x - 2;
+	const unsigned int scr_center = draw_right_pane ? scr_x / 4 : scr_x / 2;
+	const unsigned int win_width = draw_right_pane ? scr_x / 2 - 2 : scr_x - 2;
 	std::string cut_down_path = file_io::path_to_filename(path);
 	if (std::filesystem::is_directory(path) && path != "/") {
 		path += "/";
@@ -156,7 +156,7 @@ void user_interface::check_resize() {
 		scr_y = check_scr_y;
 		scr_x = check_scr_x;
 		wresize(left_pane, scr_y, scr_x / 2);
-		if (!draw_selected_path) {
+		if (!draw_right_pane) {
 			wresize(left_pane, scr_y, scr_x);
 		}
 		wresize(right_pane, scr_y, scr_x / 2);

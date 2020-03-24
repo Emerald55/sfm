@@ -7,7 +7,7 @@ class user_interface {
 		int curs_y = 0;
 		unsigned int term_height;
 		unsigned int page;
-		bool draw_selected_path = false;
+		bool draw_right_pane = false;
 		WINDOW *left_pane;
 		WINDOW *right_pane;
 		const unsigned int update_speed = 250;

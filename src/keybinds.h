@@ -4,9 +4,17 @@
 
 class keybinds {
 	public:
-		user_interface *ui;
-		keybinds(user_interface *ui);
 		std::string search_str;
+		keybinds(user_interface *ui);
+		void get_input(const std::string &selected_filepath,
+			       	unsigned int left_pane_size_currently,
+			       	unsigned int left_pane_size, 
+				const std::string &current_path, 
+				bool &is_running);
+	private:
+		user_interface *ui;
+		bool cut_path = false;
+		std::string copy_path;
 		bool quit();
 		void move_left();
 		void move_right(const std::string &selected_filepath);
@@ -30,9 +38,6 @@ class keybinds {
 		void search();
 		void screen_change();
 		void help();
-	private:
-		bool cut_path = false;
-		std::string copy_path;
 		inline int round_to(int num, int multiple) {
 			if (multiple == 0) { return num; }
 			int remainder = num % multiple;

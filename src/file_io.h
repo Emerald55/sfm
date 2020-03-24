@@ -12,6 +12,8 @@ class file_io {
 		std::vector<std::string> right_pane_files;
 		file_io(const std::string &current_path,
 			       	bool show_hidden_files, const std::string &search_str);
+		void set_dir_files(unsigned int page, unsigned int term_height, int curs_y, 
+				bool draw_right_pane, bool show_hidden_files);
 		inline static std::string path_to_filename(const std::string &path) {
 			std::string filename = path.substr(path.find_last_of("/\\") + 1);
 			return filename;

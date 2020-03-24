@@ -12,6 +12,105 @@ keybinds::keybinds(user_interface *ui) {
 	this->ui = ui;
 }
 
+void keybinds::get_input(const std::string &selected_filepath, unsigned int left_pane_size_currently, 
+		unsigned int left_pane_size, const std::string &current_path, bool &is_running) {
+	wchar_t input = getch();
+	switch (input) {
+		case 'q':
+			is_running = quit();
+			break;
+		case 'a':
+		case 'h':
+		case KEY_LEFT:
+			move_left();
+			break;
+		case 'd':
+		case 'l':
+		case KEY_RIGHT:
+			move_right(selected_filepath);
+			break;
+		case 'w':
+		case 'k':
+		case KEY_UP:
+			if (left_pane_size_currently > 0) {
+				move_up();
+			}
+			break;
+		case 's':
+		case 'j':
+		case KEY_DOWN:
+			move_down(left_pane_size_currently, left_pane_size);
+			break;
+		case 'm':
+			if (left_pane_size_currently > 0) {
+				ui->curs_y = 0;
+			}
+			break;
+		case 'n':
+			jump_to_bottom(left_pane_size_currently);
+			break;
+		case '-':
+			up_page();
+			break;
+		case '=':
+			down_page(left_pane_size_currently, left_pane_size);
+			break;
+		case ' ':
+			jump_to_line(left_pane_size);
+			break;
+		case 'v':
+			if (left_pane_size_currently > 0) {
+				edit_text(selected_filepath);
+			}
+			break;
+		case 'y':
+			if (left_pane_size_currently > 0) {
+				pager(selected_filepath);
+			}
+			break;
+		case 'u':
+			spawn_shell();
+			break;
+		case 'i':
+		case '\n':
+			if (left_pane_size_currently > 0) {
+				xdg_open(selected_filepath);
+			}
+			break;
+		case 'g':
+			if (left_pane_size_currently > 0) {
+				remove(selected_filepath);
+			}
+			break;
+		case 'e':
+			if (left_pane_size_currently > 0) {
+				rename(selected_filepath);
+			}
+			break;
+		case 'c':
+			if (left_pane_size_currently > 0) {
+				copy(selected_filepath);
+			}
+			break;
+		case 'x':
+			if (left_pane_size_currently > 0) {
+				cut(selected_filepath);
+			}
+			break;
+		case 'p':
+			paste(current_path);
+			break;
+		case 'b':
+			search();
+			break;
+		case ';':
+			screen_change();
+			break;
+		case '?':
+			help();
+	}
+}
+
 bool keybinds::quit() {
 	std::string user_input = ui->input(" Quit? [Y/n]: ", 5, 2);
 	if (user_input.empty() || user_input == "y" || user_input == "Y") {
@@ -265,8 +364,8 @@ void keybinds::search() {
 }
 
 void keybinds::screen_change() {
-	const unsigned int win_resize_width = ui->draw_selected_path ? ui->scr_x : ui->scr_x / 2;
-	ui->draw_selected_path = !ui->draw_selected_path;
+	const unsigned int win_resize_width = ui->draw_right_pane ? ui->scr_x : ui->scr_x / 2;
+	ui->draw_right_pane = !ui->draw_right_pane;
 	wresize(ui->left_pane, ui->scr_y, win_resize_width);
 }
 
