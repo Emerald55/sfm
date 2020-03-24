@@ -1,9 +1,6 @@
 #include <ncurses.h>
-#include <iostream>
 #include <vector>
 #include <filesystem>
-#include <unistd.h>
-#include <algorithm>
 #include <locale.h>
 #include "keybinds.h"
 #include "user_interface.h"

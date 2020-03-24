@@ -1,6 +1,6 @@
 CXXFLAGS = -std=c++17 -Wall -Werror -Wextra -O3
 LIBS = -lcurses -lstdc++fs
-SRCS = src/main.cpp src/user_interface.cpp src/file_io.cpp src/keybinds.cpp
+SRCS = src/main.cpp src/user_interface.cpp src/file_io.cpp src/keybinds.cpp src/flag_parse.cpp
 TARGET = sfm
 all:
 	g++ $(SRCS) -o $(TARGET) $(LIBS) $(CXXFLAGS)
