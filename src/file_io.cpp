@@ -38,31 +38,6 @@ void file_io::set_dir_files(unsigned int page, unsigned int term_height, int cur
 	}
 }
 
-std::vector<std::string> file_io::get_dir_files(const std::string &path, bool show_hidden_files, 
-		const std::string &search_str) {
-	std::vector<std::string> files;
-	for (const auto &entry : std::filesystem::directory_iterator(path)) {
-		bool was_pushed = false;
-		if (show_hidden_files) {
-			files.push_back(entry.path());
-			was_pushed = true;
-		}
-		else {
-			if (path_to_filename(entry.path().string()).rfind(".", 0) != 0) {
-				files.push_back(entry.path());
-				was_pushed = true;
-			}
-		}
-		if (was_pushed && !search_str.empty()) {
-			if (path_to_filename(entry.path().string()).find(search_str) ==
-					std::string::npos) {
-				files.pop_back();
-			}
-		}
-	}
-	return files;
-}
-
 std::vector<std::string> file_io::get_file_contents(const std::string &path,
 	       	unsigned int term_height) {
 	std::ifstream file(path);
@@ -109,4 +84,29 @@ std::string file_io::get_permbits(const std::string &current_filepath) {
 		file_perms = file_perms + " " + pwd->pw_name + " ";
 	}
 	return file_perms;
+}
+
+std::vector<std::string> file_io::get_dir_files(const std::string &path, bool show_hidden_files, 
+		const std::string &search_str) {
+	std::vector<std::string> files;
+	for (const auto &entry : std::filesystem::directory_iterator(path)) {
+		bool was_pushed = false;
+		if (show_hidden_files) {
+			files.push_back(entry.path());
+			was_pushed = true;
+		}
+		else {
+			if (path_to_filename(entry.path().string()).rfind(".", 0) != 0) {
+				files.push_back(entry.path());
+				was_pushed = true;
+			}
+		}
+		if (was_pushed && !search_str.empty()) {
+			if (path_to_filename(entry.path().string()).find(search_str) ==
+					std::string::npos) {
+				files.pop_back();
+			}
+		}
+	}
+	return files;
 }

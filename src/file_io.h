@@ -18,8 +18,6 @@ class file_io {
 			std::string filename = path.substr(path.find_last_of("/\\") + 1);
 			return filename;
 		}
-		std::vector<std::string> get_dir_files(const std::string &path, bool show_hidden_files,
-			       	const std::string &search_str = "");
 		std::vector<std::string> get_file_contents(const std::string &path, unsigned int term_height);
 		static std::string get_permbits(const std::string &current_filepath);
 		inline bool file_contents_printable(const std::string &path) {
@@ -32,6 +30,9 @@ class file_io {
 			}
 			return true;
 		}
+	private:
+		std::vector<std::string> get_dir_files(const std::string &path, bool show_hidden_files,
+			       	const std::string &search_str = "");
 };
 
 #endif
