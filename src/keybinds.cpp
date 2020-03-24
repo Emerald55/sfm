@@ -220,7 +220,11 @@ void keybinds::edit_text(const std::string &selected_filepath) {
 		}
 		exit(1);
 	}
-	waitpid(pid, NULL, 0);
+	int ret;
+	int status_child;
+	do {
+		ret = waitpid(pid, &status_child, 0);
+	} while (ret != pid || !WIFEXITED(status_child));
 	reset_prog_mode();
 }
 
@@ -239,7 +243,11 @@ void keybinds::pager(const std::string &selected_filepath) {
 		}
 		exit(1);
 	}
-	waitpid(pid, NULL, 0);
+	int ret;
+	int status_child;
+	do {
+		ret = waitpid(pid, &status_child, 0);
+	} while (ret != pid || !WIFEXITED(status_child));
 	reset_prog_mode();
 }
 
@@ -257,7 +265,11 @@ void keybinds::spawn_shell() {
 		}
 		exit(1);
 	}
-	waitpid(pid, NULL, 0);
+	int ret;
+	int status_child;
+	do {
+		ret = waitpid(pid, &status_child, 0);
+	} while (ret != pid || !WIFEXITED(status_child));
 	reset_prog_mode();
 }
 
@@ -270,7 +282,11 @@ void keybinds::xdg_open(const std::string &selected_filepath) {
 				selected_filepath.c_str(), (char*)0);
 		exit(1);
 	}
-	waitpid(pid, NULL, 0);
+	int ret;
+	int status_child;
+	do {
+		ret = waitpid(pid, &status_child, 0);
+	} while (ret != pid || !WIFEXITED(status_child));
 	reset_prog_mode();
 }
 
