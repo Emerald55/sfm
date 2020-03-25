@@ -8,7 +8,6 @@
 #include "user_interface.h"
 
 user_interface::user_interface() {
-	getmaxyx(stdscr, scr_y, scr_x);
 	start_color();
 	init_pair(1, COLOR_WHITE, COLOR_RED); //cursor
 	init_pair(2, COLOR_YELLOW, COLOR_BLACK); //directories
@@ -19,6 +18,7 @@ user_interface::user_interface() {
 	noecho();
 	curs_set(0);
 	keypad(stdscr, true);
+	getmaxyx(stdscr, scr_y, scr_x);
 	left_pane = newwin(scr_y, scr_x, 0, 0);
 	right_pane = newwin(0, 0, 0, scr_x / 2);
 	term_height = scr_y - 2;

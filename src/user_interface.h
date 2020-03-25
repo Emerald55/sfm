@@ -1,5 +1,6 @@
 #ifndef USER_INTERFACE_H
 #define USER_INTERFACE_H
+#include <ncurses.h>
 
 class user_interface {
 	public:
@@ -7,9 +8,9 @@ class user_interface {
 		int curs_y = 0;
 		unsigned int term_height;
 		unsigned int page;
-		bool draw_right_pane = false;
 		WINDOW *left_pane;
 		WINDOW *right_pane;
+		bool draw_right_pane = false;
 		const unsigned int update_speed = 250;
 		user_interface();
 		void draw_window_files(const std::vector<std::string> &files, WINDOW *win, 
