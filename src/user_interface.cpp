@@ -62,7 +62,6 @@ void user_interface::draw_window_file_contents(WINDOW *win,
 	}
 	else {
 		for (size_t i = 0; i < file_contents.size(); i++) {
-			if (i > term_height - 1) { break; }
 			mvwaddnstr(win, i + 1, 1, file_contents[i].c_str(), scr_x / 2 - 2);
 		}
 	}

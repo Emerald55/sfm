@@ -22,7 +22,7 @@ std::vector<std::string> file_io::get_file_contents(const std::string &path,
 				line.replace(pos, 1, "    "); //convert tabs to space for counting
 			}
 			contents.push_back(line);
-			if (i > term_height) { break; }
+			if (i >= term_height - 1) { break; }
 			i++;
 		}
 	}
