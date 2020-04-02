@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 			}
 			else {
 				bool contents_printable = true;
-				for (std::string &line : rp.file_content) {
+				for (const auto &line : rp.file_content) {
 					if (line.find('\0') != std::string::npos) {
 						contents_printable = false;
 						break;
