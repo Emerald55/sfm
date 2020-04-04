@@ -31,7 +31,7 @@ void user_interface::draw_window_files(const std::vector<std::string> &files, WI
 		std::string file = file_io::path_to_filename(files[i]);
 		std::string num_format = std::to_string(i + page - scr_y + 3) + ".";
 		if (!draw_curs) {
-			num_format = std::to_string(i + 1) + ".";
+			num_format = std::to_string(i + 1) + "."; //lets right pane draw proper numbers
 		}
 		wattron(win, COLOR_PAIR(3));
 		mvwaddstr(win, i + 1, 1, num_format.c_str());

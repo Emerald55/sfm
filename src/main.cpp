@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 		ui.draw_window_title(current_path, ui.left_pane);
 		if (ui.draw_right_pane) {
 			right_pane rp(lp.selected_filepath, show_hidden_files, ui.draw_right_pane,
-				       	lp.size);
+				       	lp.size, ui.term_height);
 			if (file_io::file_contents_printable(lp.selected_filepath)) {
 				rp.file_content = file_io::get_file_contents(lp.selected_filepath,
 					       	ui.term_height);
