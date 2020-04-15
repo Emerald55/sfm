@@ -150,17 +150,21 @@ void user_interface::draw_window_title(std::string path, WINDOW *win) {
 void user_interface::check_resize() {
 	unsigned int check_scr_y, check_scr_x;
 	getmaxyx(stdscr, check_scr_y, check_scr_x);
-	if ((check_scr_y != scr_y || check_scr_x != scr_x) &&
-		       	check_scr_y > 2 && check_scr_x > 2) { //check for screen resize
-		scr_y = check_scr_y;
-		scr_x = check_scr_x;
+	if (check_scr_y > 2 && check_scr_x > 2) { //too small of a screen causes crash
+		if (check_scr_y != scr_y) {
+			scr_y = check_scr_y;
+			term_height = scr_y - 2;
+			page = term_height;
+			curs_y = 0;
+		}
+		if (check_scr_x != scr_x) {
+			scr_x = check_scr_x;
+		}
 		wresize(left_pane, scr_y, scr_x / 2);
 		if (!draw_right_pane) {
 			wresize(left_pane, scr_y, scr_x);
 		}
 		wresize(right_pane, scr_y, scr_x / 2);
 		mvwin(right_pane, 0, scr_x / 2);
-		term_height = scr_y - 2;
-		page = term_height;
 	}
 }
