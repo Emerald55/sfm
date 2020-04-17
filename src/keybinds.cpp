@@ -53,7 +53,7 @@ void keybinds::get_input(const std::string &selected_filepath, unsigned int left
 			up_page();
 			break;
 		case '=':
-			down_page(left_pane_size_currently, left_pane_size);
+			down_page(left_pane_size);
 			break;
 		case ' ':
 			jump_to_line(left_pane_size);
@@ -176,10 +176,8 @@ void keybinds::up_page() {
 	}
 }
 
-void keybinds::down_page(unsigned int left_pane_size_currently, 
-		size_t left_pane_size) {
-	if (left_pane_size_currently % ui->term_height == 0 &&
-			left_pane_size > ui->term_height + 1) {
+void keybinds::down_page(size_t left_pane_size) {
+	if (left_pane_size > ui->page) {
 		ui->page += ui->term_height;
 		ui->curs_y = 0;
 	}

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <string>
 #include <thread>
+#include <math.h>
 #include <filesystem>
 #include <vector>
 #include "file_io.h"
@@ -73,8 +74,10 @@ void user_interface::draw_info(WINDOW* win, unsigned int current_dir_size, const
 	if (current_dir_size > 0) {
 		line_info = " Line: " + std::to_string(curs_y + 1 + page - scr_y + 2)
 			+ "/" + std::to_string(current_dir_size) + " ";
+		const double max_pages = std::ceil(static_cast<double>(current_dir_size) /
+			       	static_cast<double>(term_height));
 		page_info = " Page: " + std::to_string(page / term_height) +
-			"/" + std::to_string(current_dir_size / term_height + 1) +  " ";
+			"/" + std::to_string(static_cast<unsigned int>(max_pages)) +  " ";
 	}
 	else {
 		line_info = " Line: 0/0 ";
@@ -82,8 +85,10 @@ void user_interface::draw_info(WINDOW* win, unsigned int current_dir_size, const
 	}
 	const unsigned int offset = draw_right_pane ? scr_x / 2 : scr_x;
 	const std::string owner_and_perm_bits = file_io::get_permbits(current_filepath);
-	mvwaddstr(win, scr_y - 1, offset - owner_and_perm_bits.size() - line_info.size() -
-		       	page_info.size() - 8, owner_and_perm_bits.c_str());
+	if (current_dir_size > 0) {
+		mvwaddstr(win, scr_y - 1, offset - owner_and_perm_bits.size() - line_info.size() -
+				page_info.size() - 8, owner_and_perm_bits.c_str());
+	}
 	mvwaddstr(win, scr_y - 1, offset - line_info.size() - page_info.size() - 5, line_info.c_str());
 	mvwaddstr(win, scr_y - 1, offset - page_info.size() - 2, page_info.c_str());
 }
@@ -150,7 +155,8 @@ void user_interface::draw_window_title(std::string path, WINDOW *win) {
 void user_interface::check_resize() {
 	unsigned int check_scr_y, check_scr_x;
 	getmaxyx(stdscr, check_scr_y, check_scr_x);
-	if (check_scr_y > 2 && check_scr_x > 2) { //too small of a screen causes crash
+	if (check_scr_y > 2 && check_scr_x > 2 &&
+		       	(check_scr_y != scr_y || check_scr_x != scr_x)) { //too small of a screen causes crash
 		if (check_scr_y != scr_y) {
 			scr_y = check_scr_y;
 			term_height = scr_y - 2;
