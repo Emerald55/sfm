@@ -7,8 +7,8 @@ class keybinds {
 		std::string search_str;
 		keybinds(user_interface *ui);
 		void get_input(const std::string &selected_filepath,
-			       	unsigned int left_pane_size_currently,
-			       	unsigned int left_pane_size, 
+			       	size_t left_pane_size_currently,
+			       	size_t left_pane_size, 
 				const std::string &current_path, 
 				bool &is_running);
 	private:
@@ -19,9 +19,9 @@ class keybinds {
 		void move_left();
 		void move_right(const std::string &selected_filepath);
 		void move_up();
-		void move_down(unsigned int left_pane_size_currently, 
+		void move_down(size_t left_pane_size_currently, 
 				size_t left_pane_size);
-		void jump_to_bottom(unsigned int left_pane_size_currently);
+		void jump_to_bottom(size_t left_pane_size_currently);
 		void up_page();
 		void down_page(size_t left_pane_size);
 		void jump_to_line(size_t left_pane_size);

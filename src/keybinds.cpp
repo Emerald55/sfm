@@ -12,8 +12,8 @@ keybinds::keybinds(user_interface *ui) {
 	this->ui = ui;
 }
 
-void keybinds::get_input(const std::string &selected_filepath, unsigned int left_pane_size_currently, 
-		unsigned int left_pane_size, const std::string &current_path, bool &is_running) {
+void keybinds::get_input(const std::string &selected_filepath, size_t left_pane_size_currently, 
+		size_t left_pane_size, const std::string &current_path, bool &is_running) {
 	wchar_t input = getch();
 	switch (input) {
 		case 'q':
@@ -150,7 +150,7 @@ void keybinds::move_up() {
 	}
 }
 
-void keybinds::move_down(unsigned int left_pane_size_currently, 
+void keybinds::move_down(size_t left_pane_size_currently, 
 		size_t left_pane_size) {
 	if (left_pane_size_currently > 0) {
 		if (static_cast<unsigned>(ui->curs_y) < left_pane_size_currently - 1) {
@@ -163,7 +163,7 @@ void keybinds::move_down(unsigned int left_pane_size_currently,
 	}
 }
 
-void keybinds::jump_to_bottom(unsigned int left_pane_size_currently) {
+void keybinds::jump_to_bottom(size_t left_pane_size_currently) {
 	if (left_pane_size_currently > 0) {
 		ui->curs_y = left_pane_size_currently - 1;
 	}
@@ -294,8 +294,6 @@ void keybinds::remove(const std::string &selected_filepath) {
 		if (std::filesystem::exists(selected_filepath) &&
 				(user_input == "Y" || user_input == "y")) {
 			std::filesystem::remove_all(selected_filepath);
-			ui->curs_y = 0;
-			ui->page = ui->term_height;
 		}
 	}
 	catch (const std::filesystem::filesystem_error &) {
