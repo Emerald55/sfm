@@ -142,7 +142,7 @@ void keybinds::move_right(const std::string &selected_filepath) {
 
 void keybinds::move_up() {
 	if (ui->curs_y > 0) {
-		ui->curs_y -= 1;
+		ui->curs_y--;
 	}
 	else if (ui->page != ui->term_height) {
 		ui->curs_y = ui->term_height - 1;
@@ -153,8 +153,8 @@ void keybinds::move_up() {
 void keybinds::move_down(size_t left_pane_size_currently, 
 		size_t left_pane_size) {
 	if (left_pane_size_currently > 0) {
-		if (static_cast<unsigned>(ui->curs_y) < left_pane_size_currently - 1) {
-			ui->curs_y += 1;
+		if (ui->curs_y < left_pane_size_currently - 1) {
+			ui->curs_y++;
 		}
 		else if ((ui->curs_y + 1 + ui->page - ui->scr_y + 2) != left_pane_size) {
 			ui->page += ui->term_height;
@@ -186,14 +186,16 @@ void keybinds::down_page(size_t left_pane_size) {
 void keybinds::jump_to_line(size_t left_pane_size) {
 	std::string user_input = ui->input(" Jump To: ", 4, 10);
 	try {
-		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <
-				left_pane_size + 1) {
-			ui->curs_y = std::stoi(user_input) % ui->term_height - 1;
-			if (std::stoul(user_input) == ui->term_height || ui->curs_y == -1) {
-				ui->curs_y = ui->term_height - 1;
+		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <= 
+				left_pane_size) {
+			unsigned int cursor_location = std::stoi(user_input) % ui->term_height;
+			if (std::stoul(user_input) == ui->term_height || cursor_location == 0) {
+				cursor_location = ui->term_height;
 			}
 			ui->page = round_to(std::stoi(user_input), ui->term_height);
+			ui->curs_y = cursor_location - 1;
 		}
+		
 	}
 	catch (const std::invalid_argument &) {
 		ui->alert_box(" Not A Number ", 14, 750, 5);

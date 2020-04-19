@@ -40,7 +40,7 @@ void user_interface::draw_window_files(const std::vector<std::string> &files, WI
 		if (std::filesystem::is_directory(files[i])) {
 			wattron(win, COLOR_PAIR(2));
 		}
-		if (i == static_cast<unsigned>(curs_y) && draw_curs) { //highlight file where cursor is
+		if (i == curs_y && draw_curs) { //highlight file where cursor is
 			wattron(win, COLOR_PAIR(1));
 		}
 		if (show_symbolic_links && std::filesystem::is_symlink(files[i])) {

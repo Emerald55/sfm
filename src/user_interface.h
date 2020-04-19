@@ -5,7 +5,7 @@
 class user_interface {
 	public:
 		unsigned int scr_y, scr_x;
-		int curs_y = 0;
+		unsigned int curs_y = 0;
 		unsigned int term_height;
 		unsigned int page;
 		WINDOW *left_pane;
