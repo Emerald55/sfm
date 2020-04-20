@@ -1,7 +1,7 @@
 #include <ncurses.h>
 #include <string>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include "pane.h"
 #include "file_io.h"
 #include "screen_info.h"

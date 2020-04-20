@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 #include "left_pane.h"
 #include "file_io.h"
 #include "screen_info.h"
