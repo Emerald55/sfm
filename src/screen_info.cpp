@@ -8,6 +8,7 @@ screen_info::screen_info() {
 	init_pair(3, COLOR_CYAN, COLOR_BLACK); //line numbers
 	init_pair(4, COLOR_GREEN, COLOR_BLACK); //green input box
 	init_pair(5, COLOR_RED, COLOR_BLACK); //red input box and unprintable warning
+	init_pair(6, COLOR_YELLOW, COLOR_RED); //cursor on directory
 	cbreak();
 	noecho();
 	curs_set(0);

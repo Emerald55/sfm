@@ -16,11 +16,14 @@ void pane::draw_window_files(const screen_info &scr, bool draw_right_pane, bool 
 		wattron(pane, COLOR_PAIR(3));
 		mvwaddstr(pane, i + 1, 1, num_format.c_str());
 		wattroff(pane, COLOR_PAIR(3));
-		if (std::filesystem::is_directory(files[i])) {
-			wattron(pane, COLOR_PAIR(2));
+		if (i == scr.curs_y && draw_curs && std::filesystem::is_directory(files[i])) { //highlight file where cursor is
+			wattron(pane, COLOR_PAIR(6));
 		}
-		if (i == scr.curs_y && draw_curs) { //highlight file where cursor is
+		else if (i == scr.curs_y && draw_curs) {
 			wattron(pane, COLOR_PAIR(1));
+		}
+		else if (std::filesystem::is_directory(files[i])) {
+			wattron(pane, COLOR_PAIR(2));
 		}
 		if (show_symbolic_links && std::filesystem::is_symlink(files[i])) {
 			file += " -> ";
@@ -30,6 +33,7 @@ void pane::draw_window_files(const screen_info &scr, bool draw_right_pane, bool 
 		mvwaddnstr(pane, i + 1, 2 + num_format.size(), file.c_str(), current_scr_size - num_format.size() - 1);
 		wattroff(pane, COLOR_PAIR(1));
 		wattroff(pane, COLOR_PAIR(2));
+		wattroff(pane, COLOR_PAIR(3));
 	}
 }
 
