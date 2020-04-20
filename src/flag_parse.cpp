@@ -1,7 +1,7 @@
-#include "flag_parse.h"
 #include <getopt.h>
 #include <unistd.h>
 #include <iostream>
+#include "flag_parse.h"
 
 bool parse_flags(bool &show_symbolic_links, bool &show_hidden_files, int argc, char* argv[]) {
 	const option long_opts[] = {

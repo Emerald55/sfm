@@ -39,11 +39,9 @@ std::vector<std::string> file_io::get_dir_files(const std::string &path, bool sh
 			files.push_back(entry.path());
 			was_pushed = true;
 		}
-		else {
-			if (path_to_filename(entry.path().string()).rfind(".", 0) != 0) {
-				files.push_back(entry.path());
-				was_pushed = true;
-			}
+		else if (path_to_filename(entry.path().string()).rfind(".", 0) != 0) {
+			files.push_back(entry.path());
+			was_pushed = true;
 		}
 		if (was_pushed && !search_str.empty()) {
 			if (path_to_filename(entry.path().string()).find(search_str) ==
