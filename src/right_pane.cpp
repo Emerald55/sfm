@@ -11,6 +11,8 @@ right_pane::right_pane(unsigned int x, bool show_symbolic_links, bool show_hidde
 
 void right_pane::update(const screen_info &scr, const std::string &selected_filepath,
 	       	size_t left_pane_size) {
+	files.clear();
+	file_content.clear();
 	box(pane, 0, 0);
 	if (left_pane_size != 0) {
 		try {
