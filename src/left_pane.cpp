@@ -13,6 +13,7 @@ left_pane::left_pane(unsigned int y, unsigned int x,
 
 void left_pane::update(screen_info &scr, bool draw_right_pane,
 	       	const std::string &search_str, const std::string &current_path) {
+	selected_filepath = "?";
 	box(pane, 0, 0);
 	files = file_io::get_dir_files(current_path, show_hidden_files, search_str);
 	std::sort(files.begin(), files.end());

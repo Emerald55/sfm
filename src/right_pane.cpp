@@ -39,10 +39,10 @@ void right_pane::update(const screen_info &scr, const std::string &selected_file
 			}
 			draw_window_file_contents(scr, contents_printable);
 		}
-		draw_window_title(selected_filepath, scr, draw);
-		draw_window_info(scr, left_pane_size, selected_filepath, draw);
-		wrefresh(pane);
 	}
+	draw_window_title(selected_filepath, scr, draw);
+	draw_window_info(scr, left_pane_size, selected_filepath, draw);
+	wrefresh(pane);
 }
 
 void right_pane::draw_window_file_contents(const screen_info &scr, bool contents_printable) const {
