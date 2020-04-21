@@ -30,12 +30,6 @@ class keybinds {
 	private:
 		bool cut_path = false;
 		std::string copy_path;
-		inline int round_to(int num, int multiple) {
-			if (multiple == 0) { return num; }
-			int remainder = num % multiple;
-			if (remainder == 0) { return num; }
-			return num + multiple - remainder;
-		}
 };
 
 #endif

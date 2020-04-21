@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <filesystem>
 #include <vector>
+#include <cmath>
 #include <sys/wait.h>
 #include "input.h"
 #include "file_io.h"
@@ -90,7 +91,8 @@ void keybinds::jump_to_line(screen_info &scr, size_t left_pane_size) {
 			if (std::stoul(user_input) == scr.term_height || cursor_location == 0) {
 				cursor_location = scr.term_height;
 			}
-			scr.page = round_to(std::stoi(user_input), scr.term_height);
+			scr.page = static_cast<unsigned int>(std::ceil(static_cast<double>(std::stoi(user_input))
+						/ static_cast<double>(scr.term_height))) * scr.term_height;
 			scr.curs_y = cursor_location - 1;
 		}
 		
