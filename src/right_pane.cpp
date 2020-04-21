@@ -50,7 +50,7 @@ void right_pane::update(const screen_info &scr, const std::string &selected_file
 void right_pane::draw_window_file_contents(const screen_info &scr, bool contents_printable) const {
 	if (!contents_printable) {
 		wattron(pane, COLOR_PAIR(5));
-		mvwaddnstr(pane, 1, 1, "*** Contents unprintable ***", scr.x / 2 - 2);
+		mvwaddnstr(pane, 1, 1, "*** Binary contents unprintable ***", scr.x / 2 - 2);
 		wattroff(pane, COLOR_PAIR(5));
 	}
 	else {
