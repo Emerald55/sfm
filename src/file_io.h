@@ -1,6 +1,8 @@
 #ifndef FILE_IO_H
 #define FILE_IO_H
 #include <filesystem>
+#include <string>
+#include <vector>
 
 struct file_io {
 	static std::vector<std::string> get_file_contents(const std::string &path, unsigned int term_height);

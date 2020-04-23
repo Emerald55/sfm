@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <filesystem>
+#include <string>
 #include "right_pane.h"
 #include "file_io.h"
 #include "screen_info.h"

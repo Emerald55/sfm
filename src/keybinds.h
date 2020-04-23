@@ -1,5 +1,6 @@
 #ifndef KEYBINDS_H
 #define KEYBINDS_H
+#include <string>
 #include "screen_info.h"
 
 class keybinds {

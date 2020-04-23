@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <string>
+#include <filesystem>
 #include <vector>
 #include <cmath>
 #include "pane.h"

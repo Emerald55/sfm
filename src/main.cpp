@@ -1,9 +1,8 @@
 #include <ncurses.h>
-#include <vector>
 #include <filesystem>
+#include <string>
 #include <locale.h>
 #include "flag_parse.h"
-#include "file_io.h"
 #include "keybinds.h"
 #include "screen_info.h"
 #include "left_pane.h"
