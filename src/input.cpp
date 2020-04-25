@@ -1,6 +1,7 @@
 #include <ncurses.h>
 #include <chrono>
 #include <thread>
+#include <string>
 #include "input.h"
 #include "screen_info.h"
 

@@ -3,12 +3,13 @@
 #include <unistd.h>
 #include <filesystem>
 #include <vector>
+#include <cmath>
 #include <sys/wait.h>
 #include "input.h"
 #include "file_io.h"
 #include "keybinds.h"
 
-bool keybinds::quit(const screen_info &scr) {
+bool keybinds::quit(const screen_info &scr) const {
 	std::string user_input = input::input_box(" Quit? [Y/n]: ", 5, scr, 2);
 	if (user_input.empty() || user_input == "y" || user_input == "Y") {
 		return false;
@@ -38,7 +39,7 @@ void keybinds::move_right(screen_info &scr,
 	}
 }
 
-void keybinds::move_up(screen_info &scr) {
+void keybinds::move_up(screen_info &scr) const {
 	if (scr.curs_y > 0) {
 		scr.curs_y--;
 	}
@@ -49,7 +50,7 @@ void keybinds::move_up(screen_info &scr) {
 }
 
 void keybinds::move_down(screen_info &scr, size_t left_pane_size_currently, 
-		size_t left_pane_size) {
+		size_t left_pane_size) const {
 	if (left_pane_size_currently > 0) {
 		if (scr.curs_y < left_pane_size_currently - 1) {
 			scr.curs_y++;
@@ -61,27 +62,27 @@ void keybinds::move_down(screen_info &scr, size_t left_pane_size_currently,
 	}
 }
 
-void keybinds::jump_to_bottom(screen_info &scr, size_t left_pane_size_currently) {
+void keybinds::jump_to_bottom(screen_info &scr, size_t left_pane_size_currently) const {
 	if (left_pane_size_currently > 0) {
 		scr.curs_y = left_pane_size_currently - 1;
 	}
 }
 
-void keybinds::up_page(screen_info &scr) {
+void keybinds::up_page(screen_info &scr) const {
 	if (scr.page != scr.term_height) {
 		scr.page -= scr.term_height;
 		scr.curs_y = 0;
 	}
 }
 
-void keybinds::down_page(screen_info &scr, size_t left_pane_size) {
+void keybinds::down_page(screen_info &scr, size_t left_pane_size) const {
 	if (left_pane_size > scr.page) {
 		scr.page += scr.term_height;
 		scr.curs_y = 0;
 	}
 }
 
-void keybinds::jump_to_line(screen_info &scr, size_t left_pane_size) {
+void keybinds::jump_to_line(screen_info &scr, size_t left_pane_size) const {
 	std::string user_input = input::input_box(" Jump To: ", 4, scr, 10);
 	try {
 		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <= 
@@ -90,7 +91,8 @@ void keybinds::jump_to_line(screen_info &scr, size_t left_pane_size) {
 			if (std::stoul(user_input) == scr.term_height || cursor_location == 0) {
 				cursor_location = scr.term_height;
 			}
-			scr.page = round_to(std::stoi(user_input), scr.term_height);
+			scr.page = static_cast<unsigned int>(std::ceil(static_cast<double>(std::stoi(user_input))
+						/ static_cast<double>(scr.term_height))) * scr.term_height;
 			scr.curs_y = cursor_location - 1;
 		}
 		
@@ -103,7 +105,7 @@ void keybinds::jump_to_line(screen_info &scr, size_t left_pane_size) {
 	}
 }
 
-void keybinds::edit_text(const std::string &selected_filepath) {
+void keybinds::edit_text(const std::string &selected_filepath) const {
 	def_prog_mode();
 	endwin();
 	pid_t pid = fork();
@@ -126,7 +128,7 @@ void keybinds::edit_text(const std::string &selected_filepath) {
 	reset_prog_mode();
 }
 
-void keybinds::pager(const std::string &selected_filepath) {
+void keybinds::pager(const std::string &selected_filepath) const {
 	def_prog_mode();
 	endwin();
 	pid_t pid = fork();
@@ -149,7 +151,7 @@ void keybinds::pager(const std::string &selected_filepath) {
 	reset_prog_mode();
 }
 
-void keybinds::spawn_shell() {
+void keybinds::spawn_shell() const {
 	def_prog_mode();
 	endwin();
 	pid_t pid = fork();
@@ -171,7 +173,7 @@ void keybinds::spawn_shell() {
 	reset_prog_mode();
 }
 
-void keybinds::xdg_open(const std::string &selected_filepath) {
+void keybinds::xdg_open(const std::string &selected_filepath) const {
 	def_prog_mode();
 	endwin();
 	pid_t pid = fork();
@@ -188,7 +190,7 @@ void keybinds::xdg_open(const std::string &selected_filepath) {
 	reset_prog_mode();
 }
 
-void keybinds::remove(const screen_info &scr, const std::string &selected_filepath) {
+void keybinds::remove(const screen_info &scr, const std::string &selected_filepath) const {
 	std::string user_input = input::input_box(" Delete File/Directory? [y/N]: ", 5, scr, 2);
 	try {
 		if (std::filesystem::exists(selected_filepath) &&
@@ -201,7 +203,7 @@ void keybinds::remove(const screen_info &scr, const std::string &selected_filepa
 	}
 }
 
-void keybinds::rename(const screen_info &scr, const std::string &selected_filepath) {
+void keybinds::rename(const screen_info &scr, const std::string &selected_filepath) const {
 	std::string user_input = input::input_box(" Rename: ", 4, scr);
 	if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
 		try {
@@ -275,13 +277,13 @@ void keybinds::search(screen_info &scr) {
 	}
 }
 
-void keybinds::screen_change(const screen_info &scr, WINDOW* left_pane, bool &draw_right_pane) {
+void keybinds::screen_change(const screen_info &scr, WINDOW* left_pane, bool &draw_right_pane) const {
 	const unsigned int win_resize_width = draw_right_pane ? scr.x : scr.x / 2;
 	draw_right_pane = !draw_right_pane;
 	wresize(left_pane, scr.y, win_resize_width);
 }
 
-void keybinds::help(const screen_info &scr) {
+void keybinds::help(const screen_info &scr) const {
 	const unsigned int help_win_y = 27;
 	const unsigned int help_win_x = 80;
 	WINDOW *help_win = newwin(help_win_y, help_win_x, scr.y / 2 - help_win_y / 2,

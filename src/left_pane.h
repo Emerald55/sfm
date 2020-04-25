@@ -1,6 +1,5 @@
 #ifndef LEFT_PANE_H
 #define LEFT_PANE_H
-#include <vector>
 #include <string>
 #include <ncurses.h>
 #include "pane.h"
