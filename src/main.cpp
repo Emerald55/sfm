@@ -43,22 +43,10 @@ int main(int argc, char *argv[]) {
 				case KEY_RIGHT:
 					kb.move_right(scr, lp.selected_filepath);
 					break;
-				case 'w':
-				case 'k':
-				case KEY_UP:
-					if (lp.files.size() > 0) {
-						kb.move_up(scr);
-					}
-					break;
 				case 's':
 				case 'j':
 				case KEY_DOWN:
 					kb.move_down(scr, lp.files.size(), lp.size);
-					break;
-				case 'm':
-					if (lp.files.size() > 0) {
-						scr.curs_y = 0;
-					}
 					break;
 				case 'n':
 					kb.jump_to_bottom(scr, lp.files.size());
@@ -72,44 +60,8 @@ int main(int argc, char *argv[]) {
 				case ' ':
 					kb.jump_to_line(scr, lp.size);
 					break;
-				case 'v':
-					if (lp.files.size() > 0) {
-						kb.edit_text(lp.selected_filepath);
-					}
-					break;
-				case 'y':
-					if (lp.files.size() > 0) {
-						kb.pager(lp.selected_filepath);
-					}
-					break;
 				case 'u':
 					kb.spawn_shell();
-					break;
-				case 'i':
-				case '\n':
-					if (lp.files.size() > 0) {
-						kb.xdg_open(lp.selected_filepath);
-					}
-					break;
-				case 'g':
-					if (lp.files.size() > 0) {
-						kb.remove(scr, lp.selected_filepath);
-					}
-					break;
-				case 'e':
-					if (lp.files.size() > 0) {
-						kb.rename(scr, lp.selected_filepath);
-					}
-					break;
-				case 'c':
-					if (lp.files.size() > 0) {
-						kb.copy(scr, lp.selected_filepath);
-					}
-					break;
-				case 'x':
-					if (lp.files.size() > 0) {
-						kb.cut(scr, lp.selected_filepath);
-					}
 					break;
 				case 'p':
 					kb.paste(scr, current_path);
@@ -122,6 +74,39 @@ int main(int argc, char *argv[]) {
 					break;
 				case '?':
 					kb.help(scr);
+			}
+			if (lp.files.size() > 0) {
+				switch (input) {
+					case 'w':
+					case 'k':
+					case KEY_UP:
+						kb.move_up(scr);
+						break;
+					case 'm':
+						scr.curs_y = 0;
+						break;
+					case 'x':
+						kb.cut(scr, lp.selected_filepath);
+						break;
+					case 'c':
+						kb.copy(scr, lp.selected_filepath);
+						break;
+					case 'i':
+					case '\n':
+						kb.xdg_open(lp.selected_filepath);
+						break;
+					case 'g':
+						kb.remove(scr, lp.selected_filepath);
+						break;
+					case 'e':
+						kb.rename(scr, lp.selected_filepath);
+						break;
+					case 'v':
+						kb.edit_text(lp.selected_filepath);
+						break;
+					case 'y':
+						kb.pager(lp.selected_filepath);
+				}
 			}
 			timeout(scr.update_speed);
 		}
