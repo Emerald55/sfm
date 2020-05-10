@@ -10,6 +10,7 @@ class pane {
 	public:
 		WINDOW* pane;
 		std::vector<std::string> files;
+		~pane();
 	protected:
 		void draw_window_files(const screen_info &scr, bool draw_right_pane,
 			       	const flag_parse &flags, bool draw_curs = false) const;

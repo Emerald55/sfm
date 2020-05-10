@@ -84,3 +84,7 @@ void pane::draw_window_title(std::string path, const screen_info &scr, bool draw
 		mvwaddstr(pane, 0, scr_center, (" ... "));
 	}
 }
+
+pane::~pane() {
+	delwin(pane);
+}
