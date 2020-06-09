@@ -6,8 +6,10 @@
 #include "pane.h"
 #include "file_io.h"
 #include "screen_info.h"
+#include "flag_parse.h"
 
-void pane::draw_window_files(const screen_info &scr, bool draw_right_pane, bool draw_curs) const {
+void pane::draw_window_files(const screen_info &scr, bool draw_right_pane, 
+		const flag_parse &flags, bool draw_curs) const {
 	for (size_t i = 0; i < files.size(); i++) {
 		std::string file = file_io::path_to_filename(files[i]);
 		std::string num_format = std::to_string(i + scr.page - scr.y + 3) + ".";
@@ -26,7 +28,7 @@ void pane::draw_window_files(const screen_info &scr, bool draw_right_pane, bool 
 		else if (std::filesystem::is_directory(files[i])) {
 			wattron(pane, COLOR_PAIR(2));
 		}
-		if (show_symbolic_links && std::filesystem::is_symlink(files[i])) {
+		if (flags.show_symbolic_links && std::filesystem::is_symlink(files[i])) {
 			file += " -> ";
 			file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
 		}
@@ -81,4 +83,8 @@ void pane::draw_window_title(std::string path, const screen_info &scr, bool draw
 	else {
 		mvwaddstr(pane, 0, scr_center, (" ... "));
 	}
+}
+
+pane::~pane() {
+	delwin(pane);
 }

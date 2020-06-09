@@ -8,6 +8,7 @@
 #include <fstream>
 #include <algorithm>
 #include "file_io.h"
+#include "flag_parse.h"
 
 std::vector<std::string> file_io::get_file_contents(const std::string &path,
 	       	unsigned int term_height) {
@@ -30,11 +31,11 @@ std::vector<std::string> file_io::get_file_contents(const std::string &path,
 	return contents;
 }
 
-std::vector<std::string> file_io::get_dir_files(const std::string &path, bool show_hidden_files, 
+std::vector<std::string> file_io::get_dir_files(const std::string &path, const flag_parse &flags, 
 		const std::string &search_str) {
 	std::vector<std::string> files;
 	for (const auto &entry : std::filesystem::directory_iterator(path)) {
-		if (show_hidden_files) {
+		if (flags.show_hidden_files) {
 			if (path_to_filename(entry.path().string()).find(search_str) !=
 					std::string::npos) {
 				files.push_back(entry.path());

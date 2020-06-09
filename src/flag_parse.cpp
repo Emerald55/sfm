@@ -3,7 +3,11 @@
 #include <iostream>
 #include "flag_parse.h"
 
-bool parse_flags(bool &show_symbolic_links, bool &show_hidden_files, int argc, char* argv[]) {
+flag_parse::flag_parse(int argc, char* argv[]) {
+	start_program = parse_flags(argc, argv);
+}
+
+bool flag_parse::parse_flags(int argc, char* argv[]) {
 	const option long_opts[] = {
 		{"help", no_argument, nullptr, 'h'},
 		{"all", no_argument, nullptr, 'a'},
@@ -11,7 +15,7 @@ bool parse_flags(bool &show_symbolic_links, bool &show_hidden_files, int argc, c
 		{"path", required_argument, nullptr, 'p'}
 	};
 	int opt;
-	while((opt = getopt_long(argc, argv, ":p:has", long_opts, nullptr)) != -1) {
+	while ((opt = getopt_long(argc, argv, ":p:has", long_opts, nullptr)) != -1) {
 		switch (opt) {
 			case '?':
 			       std::cerr << "Invalid flag, type \"-h\" for options.\n";
@@ -35,7 +39,7 @@ bool parse_flags(bool &show_symbolic_links, bool &show_hidden_files, int argc, c
 			case 'p':
 				errno = chdir(optarg);
 				if (errno == -1) {
-					std::cerr << "Could Not Find And/Or Enter Directory, Exiting...\n";
+					std::cerr << "Could not find and/or enter directory, exiting...\n";
 					return false;
 				}
 		}

@@ -4,22 +4,21 @@
 #include "right_pane.h"
 #include "file_io.h"
 #include "screen_info.h"
+#include "flag_parse.h"
 
-right_pane::right_pane(unsigned int x, bool show_symbolic_links, bool show_hidden_files) {
+right_pane::right_pane(unsigned int x) {
 	pane = newwin(0, 0, 0, x / 2);
-	this->show_symbolic_links = show_symbolic_links;
-	this->show_hidden_files = show_hidden_files;
 }
 
 void right_pane::update(const screen_info &scr, const std::string &selected_filepath,
-	       	size_t left_pane_size) {
+	       	size_t left_pane_size, const flag_parse &flags) {
 	files.clear();
 	file_content.clear();
 	box(pane, 0, 0);
 	if (left_pane_size != 0) {
 		try {
 			if (std::filesystem::is_directory(selected_filepath) && draw) {
-				files = file_io::get_dir_files(selected_filepath, show_hidden_files);
+				files = file_io::get_dir_files(selected_filepath, flags);
 				std::sort(files.begin(), files.end());
 				if (files.size() > scr.term_height) {
 					files.erase(files.begin() + scr.term_height, files.end());
@@ -31,7 +30,7 @@ void right_pane::update(const screen_info &scr, const std::string &selected_file
 			file_content = file_io::get_file_contents(selected_filepath, scr.term_height);
 		}
 		if (std::filesystem::is_directory(selected_filepath)) {
-			draw_window_files(scr, draw);
+			draw_window_files(scr, draw, flags);
 		}
 		else {
 			bool contents_printable = true;
