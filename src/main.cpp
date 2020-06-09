@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 			if (rp.draw) {
 				rp.update(scr, lp.selected_filepath, lp.size, flags);
 			}
-			wchar_t input = getch();
+			const wchar_t input = getch();
 			switch (input) {
 				case 'q':
 					is_running = kb.quit(scr);
