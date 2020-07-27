@@ -291,8 +291,8 @@ void keybinds::help(const screen_info &scr) const {
 	mvwaddstr(help_win, 7, 1, "\"d\" or \"l\" or RIGHT ARROW - Move into a directory");
 	mvwaddstr(help_win, 8, 1, "\";\" - Split screen toggle");
 	mvwaddstr(help_win, 9, 1, "SPACEBAR - Jump to specific line number (leave empty to cancel)");
-	mvwaddstr(help_win, 10, 1, "\"=\" - Go forward a page");
-	mvwaddstr(help_win, 11, 1, "\"-\" - Go back a page");
+	mvwaddstr(help_win, 10, 1, "\"=\" or PAGE UP - Go forward a page");
+	mvwaddstr(help_win, 11, 1, "\"-\" or PAGE DOWN - Go back a page");
 	mvwaddstr(help_win, 12, 1, "\"m\" - Jump to top of current page");
 	mvwaddstr(help_win, 13, 1, "\"n\" - Jump to bottom of current page");
 	mvwaddstr(help_win, 14, 1, "\"i\" or ENTER - Open file or folder with xdg-open");

@@ -52,9 +52,11 @@ int main(int argc, char *argv[]) {
 					kb.jump_to_bottom(scr, lp.files.size());
 					break;
 				case '-':
+				case KEY_PPAGE:
 					kb.up_page(scr);
 					break;
 				case '=':
+				case KEY_NPAGE:
 					kb.down_page(scr, lp.size);
 					break;
 				case ' ':
