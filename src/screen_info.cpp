@@ -25,9 +25,12 @@ void screen_info::check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_
 		       	(check_scr_y != y || check_scr_x != x)) { //too small of a screen causes crash
 		if (check_scr_y != y) {
 			y = check_scr_y;
+			const unsigned int page_number = page / term_height;
 			term_height = y - 2;
-			page = term_height;
-			curs_y = 0;
+			page = term_height * page_number;
+			if (curs_y >= term_height) { //if cursor is farther out than height from resizing
+				curs_y = term_height - 1;
+			}
 		}
 		if (check_scr_x != x) {
 			x = check_scr_x;
