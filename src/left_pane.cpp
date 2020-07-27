@@ -21,20 +21,21 @@ void left_pane::update(screen_info &scr, bool draw_right_pane,
 	std::sort(files.begin(), files.end());
 	size = files.size();
 	if (size != 0) {
-		const unsigned int current_line_number = (scr.page - scr.term_height) + scr.curs_y + 1;
+		const unsigned int current_line_number = (scr.get_page() - scr.get_term_height())
+		       	+ scr.get_curs_y() + 1;
 		if (size < current_line_number) { //if deleted last file on a page
-			scr.page = static_cast<unsigned int>(std::ceil(static_cast<double>(size)
-						/ static_cast<double>(scr.term_height))) * scr.term_height;
+			scr.set_page(static_cast<unsigned int>(std::ceil(static_cast<double>(size)
+						/ static_cast<double>(scr.get_term_height()))) * scr.get_term_height());
 		}
-		const unsigned int page_floor = scr.page - scr.term_height;
+		const unsigned int page_floor = scr.get_page() - scr.get_term_height();
 		files.erase(files.begin(), files.begin() + page_floor); //trim before page
-		if (size > scr.page) {
-			files.erase(files.begin() + scr.page - page_floor, files.end()); //trim after
+		if (size > scr.get_page()) {
+			files.erase(files.begin() + scr.get_page() - page_floor, files.end()); //trim after
 		}
 		if (size < current_line_number) { //if hovering over last file and its deleted
-			scr.curs_y = files.size() - 1;
+			scr.set_curs_y(files.size() - 1);
 		}
-		selected_filepath = files[scr.curs_y];
+		selected_filepath = files[scr.get_curs_y()];
 	}
 	draw_window_files(scr, draw_right_pane, flags, true);
 	draw_window_title(current_path, scr, draw_right_pane);

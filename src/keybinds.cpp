@@ -18,8 +18,8 @@ bool keybinds::quit(const screen_info &scr) const {
 }
 
 void keybinds::move_left(screen_info &scr) {
-	scr.curs_y = 0;
-	scr.page = scr.term_height;
+	scr.set_curs_y(0);
+	scr.set_page(scr.get_term_height());
 	search_str = "";
 	chdir("..");
 }
@@ -32,53 +32,53 @@ void keybinds::move_right(screen_info &scr,
 			input::alert_box(" Invalid Permission ", 20, 750, 5, scr);
 		}
 		else {
-			scr.page = scr.term_height;
-			scr.curs_y = 0;
+			scr.set_page(scr.get_term_height());
+			scr.set_curs_y(0);
 			search_str = "";
 		}
 	}
 }
 
 void keybinds::move_up(screen_info &scr) const {
-	if (scr.curs_y > 0) {
-		scr.curs_y--;
+	if (scr.get_curs_y() > 0) {
+		scr.set_curs_y(scr.get_curs_y() - 1);
 	}
-	else if (scr.page != scr.term_height) {
-		scr.curs_y = scr.term_height - 1;
-		scr.page -= scr.term_height;
+	else if (scr.get_page() != scr.get_term_height()) {
+		scr.set_curs_y(scr.get_term_height() - 1);
+		scr.set_page(scr.get_page() - scr.get_term_height());
 	}
 }
 
 void keybinds::move_down(screen_info &scr, size_t left_pane_size_currently, 
 		size_t left_pane_size) const {
 	if (left_pane_size_currently > 0) {
-		if (scr.curs_y < left_pane_size_currently - 1) {
-			scr.curs_y++;
+		if (scr.get_curs_y() < left_pane_size_currently - 1) {
+			scr.set_curs_y(scr.get_curs_y() + 1);
 		}
-		else if ((scr.curs_y + 1 + scr.page - scr.y + 2) != left_pane_size) {
-			scr.page += scr.term_height;
-			scr.curs_y = 0;
+		else if ((scr.get_curs_y() + 1 + scr.get_page() - scr.get_y() + 2) != left_pane_size) {
+			scr.set_page(scr.get_page() + scr.get_term_height());
+			scr.set_curs_y(0);
 		}
 	}
 }
 
 void keybinds::jump_to_bottom(screen_info &scr, size_t left_pane_size_currently) const {
 	if (left_pane_size_currently > 0) {
-		scr.curs_y = left_pane_size_currently - 1;
+		scr.set_curs_y(left_pane_size_currently - 1);
 	}
 }
 
 void keybinds::up_page(screen_info &scr) const {
-	if (scr.page != scr.term_height) {
-		scr.page -= scr.term_height;
-		scr.curs_y = 0;
+	if (scr.get_page() != scr.get_term_height()) {
+		scr.set_page(scr.get_page() - scr.get_term_height());
+		scr.set_curs_y(0);
 	}
 }
 
 void keybinds::down_page(screen_info &scr, size_t left_pane_size) const {
-	if (left_pane_size > scr.page) {
-		scr.page += scr.term_height;
-		scr.curs_y = 0;
+	if (left_pane_size > scr.get_page()) {
+		scr.set_page(scr.get_page() + scr.get_term_height());
+		scr.set_curs_y(0);
 	}
 }
 
@@ -87,13 +87,13 @@ void keybinds::jump_to_line(screen_info &scr, size_t left_pane_size) const {
 	try {
 		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <= 
 				left_pane_size) {
-			unsigned int cursor_location = std::stoi(user_input) % scr.term_height;
-			if (std::stoul(user_input) == scr.term_height || cursor_location == 0) {
-				cursor_location = scr.term_height;
+			unsigned int cursor_location = std::stoi(user_input) % scr.get_term_height();
+			if (std::stoul(user_input) == scr.get_term_height() || cursor_location == 0) {
+				cursor_location = scr.get_term_height();
 			}
-			scr.page = static_cast<unsigned int>(std::ceil(static_cast<double>(std::stoi(user_input))
-						/ static_cast<double>(scr.term_height))) * scr.term_height;
-			scr.curs_y = cursor_location - 1;
+			scr.set_page(static_cast<unsigned int>(std::ceil(static_cast<double>(std::stoi(user_input))
+						/ static_cast<double>(scr.get_term_height()))) * scr.get_term_height());
+			scr.set_curs_y(cursor_location - 1);
 		}
 		
 	}
@@ -240,8 +240,8 @@ void keybinds::paste(screen_info &scr, const std::string &current_path) {
 				input::alert_box((" Cut: " + file_io::path_to_filename(copy_path) + " ").c_str(),
 						7 + file_io::path_to_filename(copy_path).size(), 500, 4, scr);
 				std::filesystem::remove_all(copy_path);
-				scr.curs_y = 0;
-				scr.page = scr.term_height;
+				scr.set_curs_y(0);
+				scr.set_page(scr.get_term_height());
 				cut_path = false;
 			}
 			else {
@@ -266,28 +266,28 @@ void keybinds::search(screen_info &scr) {
 		std::string user_input = input::input_box(" Search: ", 4, scr);
 		if (!user_input.empty()) {
 			search_str = user_input;
-			scr.curs_y = 0;
-			scr.page = scr.term_height;
+			scr.set_curs_y(0);
+			scr.set_page(scr.get_term_height());
 		}
 	}
 	else {
 		search_str = "";
-		scr.curs_y = 0;
-		scr.page = scr.term_height;
+		scr.set_curs_y(0);
+		scr.set_page(scr.get_term_height());
 	}
 }
 
 void keybinds::screen_change(const screen_info &scr, WINDOW* left_pane, bool &draw_right_pane) const {
-	const unsigned int win_resize_width = draw_right_pane ? scr.x : scr.x / 2;
+	const unsigned int win_resize_width = draw_right_pane ? scr.get_x() : scr.get_x() / 2;
 	draw_right_pane = !draw_right_pane;
-	wresize(left_pane, scr.y, win_resize_width);
+	wresize(left_pane, scr.get_y(), win_resize_width);
 }
 
 void keybinds::help(const screen_info &scr) const {
 	const unsigned int help_win_y = 27;
 	const unsigned int help_win_x = 80;
-	WINDOW *help_win = newwin(help_win_y, help_win_x, scr.y / 2 - help_win_y / 2,
-			scr.x / 2 - help_win_x / 2);
+	WINDOW *help_win = newwin(help_win_y, help_win_x, scr.get_y() / 2 - help_win_y / 2,
+			scr.get_x() / 2 - help_win_x / 2);
 	mvwaddstr(help_win, 1, help_win_x / 2 - 5, "Keybinds:");
 	mvwaddstr(help_win, 3, 1, "\"q\" - Quit or exit");
 	mvwaddstr(help_win, 4, 1, "\"w\" or \"k\" or UP ARROW - Move cursor up");

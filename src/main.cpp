@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
 		setlocale(LC_ALL, "");
 		initscr();
 		screen_info scr;
-		left_pane lp(scr.y, scr.x);
-		right_pane rp(scr.x);
+		left_pane lp(scr.get_y(), scr.get_x());
+		right_pane rp(scr.get_x());
 		keybinds kb;
 		bool is_running = true;
 		timeout(0); //draw window first time instantly
@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
 						kb.move_up(scr);
 						break;
 					case 'm':
-						scr.curs_y = 0;
+						scr.set_curs_y(0);
 						break;
 					case 'x':
 						kb.cut(scr, lp.selected_filepath);

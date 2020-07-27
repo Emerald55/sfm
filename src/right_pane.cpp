@@ -20,14 +20,14 @@ void right_pane::update(const screen_info &scr, const std::string &selected_file
 			if (std::filesystem::is_directory(selected_filepath) && draw) {
 				files = file_io::get_dir_files(selected_filepath, flags);
 				std::sort(files.begin(), files.end());
-				if (files.size() > scr.term_height) {
-					files.erase(files.begin() + scr.term_height, files.end());
+				if (files.size() > scr.get_term_height()) {
+					files.erase(files.begin() + scr.get_term_height(), files.end());
 				}
 			
 			}
 		} catch (const std::filesystem::filesystem_error &) {} //no permission to read contents
 		if (file_io::file_contents_printable(selected_filepath)) {
-			file_content = file_io::get_file_contents(selected_filepath, scr.term_height);
+			file_content = file_io::get_file_contents(selected_filepath, scr.get_term_height());
 		}
 		if (std::filesystem::is_directory(selected_filepath)) {
 			draw_window_files(scr, draw, flags);
@@ -51,12 +51,12 @@ void right_pane::update(const screen_info &scr, const std::string &selected_file
 void right_pane::draw_window_file_contents(const screen_info &scr, bool contents_printable) const {
 	if (!contents_printable) {
 		wattron(pane, COLOR_PAIR(5));
-		mvwaddnstr(pane, 1, 1, "*** Binary contents unprintable ***", scr.x / 2 - 2);
+		mvwaddnstr(pane, 1, 1, "*** Binary contents unprintable ***", scr.get_x() / 2 - 2);
 		wattroff(pane, COLOR_PAIR(5));
 	}
 	else {
 		for (size_t i = 0; i < file_content.size(); i++) {
-			mvwaddnstr(pane, i + 1, 1, file_content[i].c_str(), scr.x / 2 - 2);
+			mvwaddnstr(pane, i + 1, 1, file_content[i].c_str(), scr.get_x() / 2 - 2);
 		}
 	}
 }
