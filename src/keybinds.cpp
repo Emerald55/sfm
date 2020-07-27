@@ -18,8 +18,7 @@ bool keybinds::quit(const screen_info &scr) const {
 }
 
 void keybinds::move_left(screen_info &scr) {
-	scr.set_curs_y(0);
-	scr.set_page(scr.get_term_height());
+	scr.reset_to_first_page();
 	search_str = "";
 	chdir("..");
 }
@@ -32,8 +31,7 @@ void keybinds::move_right(screen_info &scr,
 			input::alert_box(" Invalid Permission ", 20, 750, 5, scr);
 		}
 		else {
-			scr.set_page(scr.get_term_height());
-			scr.set_curs_y(0);
+			scr.reset_to_first_page();
 			search_str = "";
 		}
 	}
@@ -240,8 +238,7 @@ void keybinds::paste(screen_info &scr, const std::string &current_path) {
 				input::alert_box((" Cut: " + file_io::path_to_filename(copy_path) + " ").c_str(),
 						7 + file_io::path_to_filename(copy_path).size(), 500, 4, scr);
 				std::filesystem::remove_all(copy_path);
-				scr.set_curs_y(0);
-				scr.set_page(scr.get_term_height());
+				scr.reset_to_first_page();
 				cut_path = false;
 			}
 			else {
@@ -266,14 +263,12 @@ void keybinds::search(screen_info &scr) {
 		std::string user_input = input::input_box(" Search: ", 4, scr);
 		if (!user_input.empty()) {
 			search_str = user_input;
-			scr.set_curs_y(0);
-			scr.set_page(scr.get_term_height());
+			scr.reset_to_first_page();
 		}
 	}
 	else {
 		search_str = "";
-		scr.set_curs_y(0);
-		scr.set_page(scr.get_term_height());
+		scr.reset_to_first_page();
 	}
 }
 

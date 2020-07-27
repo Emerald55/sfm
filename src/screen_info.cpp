@@ -44,3 +44,8 @@ void screen_info::check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_
 		
 	}
 }
+
+void screen_info::reset_to_first_page() {
+	curs_y = 0;
+	page = term_height;
+}

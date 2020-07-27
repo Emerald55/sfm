@@ -7,6 +7,7 @@ class screen_info {
 		const unsigned int update_speed = 250;
 		screen_info();
 		void check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_right_pane);
+		void reset_to_first_page();
 		inline unsigned int get_y() const { return y; }
 		inline unsigned int get_x() const { return x; }
 		inline unsigned int get_term_height() const { return term_height; };
