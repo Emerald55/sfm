@@ -28,7 +28,7 @@ void pane::draw_window_files(const screen_info &scr, bool draw_right_pane,
 		else if (std::filesystem::is_directory(files[i])) {
 			wattron(pane, COLOR_PAIR(2));
 		}
-		if (flags.show_symbolic_links && std::filesystem::is_symlink(files[i])) {
+		if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
 			file += " -> ";
 			file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
 		}

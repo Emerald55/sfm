@@ -11,8 +11,8 @@ left_pane::left_pane(unsigned int y, unsigned int x) {
 }
 
 void left_pane::update(screen_info &scr, bool draw_right_pane,
-	       	const std::string &search_str, const std::string &current_path, 
-		const flag_parse &flags) {
+	       	const std::string &search_str, const flag_parse &flags) {
+	current_path = std::filesystem::current_path().string();
 	files.clear();
 	size = 0;
 	selected_filepath = "?";

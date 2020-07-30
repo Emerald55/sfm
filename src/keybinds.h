@@ -5,7 +5,7 @@
 
 class keybinds {
 	public:
-		std::string search_str;
+		inline std::string get_search_str() const { return search_str; }
 		bool quit(const screen_info &scr) const;
 		void move_left(screen_info &scr);
 		void move_right(screen_info &scr, const std::string &selected_filepath);
@@ -26,11 +26,12 @@ class keybinds {
 		void cut(const screen_info &scr, const std::string &selected_filepath);
 		void paste(screen_info &scr, const std::string &current_path);
 		void search(screen_info &scr);
-		void screen_change(const screen_info &scr, WINDOW* left_pane, bool &draw_right_pane) const;
+		void screen_change(const screen_info &scr, WINDOW* left_pane, bool draw_right_pane) const;
 		void help(const screen_info &scr) const;
 	private:
 		bool cut_path = false;
 		std::string copy_path;
+		std::string search_str;
 };
 
 #endif

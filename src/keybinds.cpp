@@ -272,7 +272,7 @@ void keybinds::search(screen_info &scr) {
 	}
 }
 
-void keybinds::screen_change(const screen_info &scr, WINDOW* left_pane, bool &draw_right_pane) const {
+void keybinds::screen_change(const screen_info &scr, WINDOW* left_pane, bool draw_right_pane) const {
 	const unsigned int win_resize_width = draw_right_pane ? scr.get_x() : scr.get_x() / 2;
 	draw_right_pane = !draw_right_pane;
 	wresize(left_pane, scr.get_y(), win_resize_width);

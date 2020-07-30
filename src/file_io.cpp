@@ -35,7 +35,7 @@ std::vector<std::string> file_io::get_dir_files(const std::string &path, const f
 		const std::string &search_str) {
 	std::vector<std::string> files;
 	for (const auto &entry : std::filesystem::directory_iterator(path)) {
-		if (flags.show_hidden_files) {
+		if (flags.get_show_hidden_files()) {
 			if (path_to_filename(entry.path().string()).find(search_str) !=
 					std::string::npos) {
 				files.push_back(entry.path());
