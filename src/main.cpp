@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 					kb.search(scr);
 					break;
 				case ';':
-					kb.screen_change(scr, lp.pane, rp.get_draw());
+					rp.set_draw(kb.screen_change(scr, lp.pane, rp.get_draw()));
 					break;
 				case '?':
 					kb.help(scr);

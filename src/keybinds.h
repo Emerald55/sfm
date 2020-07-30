@@ -26,7 +26,7 @@ class keybinds {
 		void cut(const screen_info &scr, const std::string &selected_filepath);
 		void paste(screen_info &scr, const std::string &current_path);
 		void search(screen_info &scr);
-		void screen_change(const screen_info &scr, WINDOW* left_pane, bool draw_right_pane) const;
+		bool screen_change(const screen_info &scr, WINDOW* left_pane, bool draw_right_pane) const;
 		void help(const screen_info &scr) const;
 	private:
 		bool cut_path = false;
