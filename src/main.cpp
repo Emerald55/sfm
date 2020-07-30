@@ -14,19 +14,15 @@ int main(int argc, char *argv[]) {
 		setlocale(LC_ALL, "");
 		initscr();
 		Screen scr;
-		LeftPane lp(scr.get_y(), scr.get_x());
-		RightPane rp(scr.get_x());
+		LeftPane lp(scr.get_x(), scr.get_y());
+		RightPane rp(scr.get_x(), scr.get_y());
 		Keybinds kb;
 		bool is_running = true;
 		timeout(0); //draw window first time instantly
 		while (is_running) {
-			scr.check_resize(lp.pane, rp.pane, rp.get_draw());
-			werase(lp.pane);
-			werase(rp.pane);
+			scr.check_resize(lp, rp);
 			lp.update(scr, rp.get_draw(), kb.get_search_str(), flags);
-			if (rp.get_draw()) {
-				rp.update(scr, lp.get_selected_filepath(), lp.get_size(), flags);
-			}
+			rp.update(scr, lp.get_selected_filepath(), lp.get_size(), flags);
 			const wchar_t input = getch();
 			switch (input) {
 				case 'q':
@@ -71,7 +67,7 @@ int main(int argc, char *argv[]) {
 					kb.search(scr);
 					break;
 				case ';':
-					rp.set_draw(kb.screen_change(scr, lp.pane, rp.get_draw()));
+					rp.set_draw(kb.screen_change(scr, lp, rp.get_draw()));
 					break;
 				case '?':
 					kb.help(scr);

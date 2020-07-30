@@ -6,12 +6,15 @@
 #include "Screen.h"
 #include "FlagParse.h"
 
-LeftPane::LeftPane(unsigned int y, unsigned int x) {
-	pane = newwin(y, x, 0, 0);
+LeftPane::LeftPane(unsigned int width, unsigned int height) {
+	this->width = width;
+	this->height = height;
+	pane = newwin(height, width, 0, 0);
 }
 
 void LeftPane::update(Screen &scr, bool draw_right_pane,
 	       	const std::string &search_str, const FlagParse &flags) {
+	werase(pane);
 	current_path = std::filesystem::current_path().string();
 	files.clear();
 	size = 0;
@@ -38,9 +41,9 @@ void LeftPane::update(Screen &scr, bool draw_right_pane,
 		selected_filepath = files[scr.get_curs_y()];
 	}
 	draw_window_files(scr, draw_right_pane, flags, true);
-	draw_window_title(current_path, scr, draw_right_pane);
+	draw_window_title(current_path);
 	if (!draw_right_pane) {
-		draw_window_info(scr, size, selected_filepath, draw_right_pane);
+		draw_window_info(scr, size, selected_filepath);
 	}
 	wrefresh(pane);
 }

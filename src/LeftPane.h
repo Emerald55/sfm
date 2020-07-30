@@ -8,7 +8,7 @@
 
 class LeftPane : public Pane {
 	public:
-		LeftPane(unsigned int y, unsigned int x);
+		LeftPane(unsigned int width, unsigned int height);
 		void update(Screen &scr, bool draw_right_pane, const std::string &search_str,
 				const FlagParse &flags);
 		inline std::string get_selected_filepath() const { return selected_filepath; }

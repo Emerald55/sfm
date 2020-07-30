@@ -2,11 +2,14 @@
 #define SCREEN_H
 #include <ncurses.h>
 
+class RightPane;
+class LeftPane;
+
 class Screen {
 	public:
 		const unsigned int update_speed = 250;
 		Screen();
-		void check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_right_pane);
+		void check_resize(LeftPane &lp, RightPane &rp);
 		void reset_to_first_page();
 		inline unsigned int get_y() const { return y; }
 		inline unsigned int get_x() const { return x; }

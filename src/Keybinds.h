@@ -2,6 +2,7 @@
 #define KEYBINDS_H
 #include <string>
 #include "Screen.h"
+#include "LeftPane.h"
 
 class Keybinds {
 	public:
@@ -26,7 +27,7 @@ class Keybinds {
 		void cut(const Screen &scr, const std::string &selected_filepath);
 		void paste(Screen &scr, const std::string &current_path);
 		void search(Screen &scr);
-		bool screen_change(const Screen &scr, WINDOW* left_pane, bool draw_right_pane) const;
+		bool screen_change(const Screen &scr, LeftPane &lp, bool draw_right_pane) const;
 		void help(const Screen &scr) const;
 	private:
 		bool cut_path = false;

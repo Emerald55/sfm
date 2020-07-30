@@ -8,6 +8,7 @@
 #include "Input.h"
 #include "FileIO.h"
 #include "Keybinds.h"
+#include "LeftPane.h"
 
 bool Keybinds::quit(const Screen &scr) const {
 	std::string user_input = Input::input_box(" Quit? [Y/n]: ", 5, scr, 2);
@@ -272,10 +273,10 @@ void Keybinds::search(Screen &scr) {
 	}
 }
 
-bool Keybinds::screen_change(const Screen &scr, WINDOW* left_pane, bool draw_right_pane) const {
+bool Keybinds::screen_change(const Screen &scr, LeftPane &lp, bool draw_right_pane) const {
 	const unsigned int win_resize_width = draw_right_pane ? scr.get_x() : scr.get_x() / 2;
 	draw_right_pane = !draw_right_pane;
-	wresize(left_pane, scr.get_y(), win_resize_width);
+	lp.resize(win_resize_width, scr.get_y());
 	return draw_right_pane;
 }
 
