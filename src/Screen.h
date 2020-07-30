@@ -1,11 +1,11 @@
-#ifndef SCREEN_INFO_H
-#define SCREEN_INFO_H
+#ifndef SCREEN_H
+#define SCREEN_H
 #include <ncurses.h>
 
-class screen_info {
+class Screen {
 	public:
 		const unsigned int update_speed = 250;
-		screen_info();
+		Screen();
 		void check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_right_pane);
 		void reset_to_first_page();
 		inline unsigned int get_y() const { return y; }

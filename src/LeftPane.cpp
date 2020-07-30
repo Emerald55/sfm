@@ -1,23 +1,23 @@
 #include <algorithm>
 #include <string>
 #include <cmath>
-#include "left_pane.h"
-#include "file_io.h"
-#include "screen_info.h"
-#include "flag_parse.h"
+#include "LeftPane.h"
+#include "FileIO.h"
+#include "Screen.h"
+#include "FlagParse.h"
 
-left_pane::left_pane(unsigned int y, unsigned int x) {
+LeftPane::LeftPane(unsigned int y, unsigned int x) {
 	pane = newwin(y, x, 0, 0);
 }
 
-void left_pane::update(screen_info &scr, bool draw_right_pane,
-	       	const std::string &search_str, const flag_parse &flags) {
+void LeftPane::update(Screen &scr, bool draw_right_pane,
+	       	const std::string &search_str, const FlagParse &flags) {
 	current_path = std::filesystem::current_path().string();
 	files.clear();
 	size = 0;
 	selected_filepath = "?";
 	box(pane, 0, 0);
-	files = file_io::get_dir_files(current_path, flags, search_str);
+	files = FileIO::get_dir_files(current_path, flags, search_str);
 	std::sort(files.begin(), files.end());
 	size = files.size();
 	if (size != 0) {

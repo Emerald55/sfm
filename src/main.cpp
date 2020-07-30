@@ -2,21 +2,21 @@
 #include <filesystem>
 #include <string>
 #include <locale.h>
-#include "flag_parse.h"
-#include "keybinds.h"
-#include "screen_info.h"
-#include "left_pane.h"
-#include "right_pane.h"
+#include "FlagParse.h"
+#include "Keybinds.h"
+#include "Screen.h"
+#include "LeftPane.h"
+#include "RightPane.h"
 
 int main(int argc, char *argv[]) {
-	flag_parse flags(argc, argv);
+	FlagParse flags(argc, argv);
 	if (flags.get_start_program()) {
 		setlocale(LC_ALL, "");
 		initscr();
-		screen_info scr;
-		left_pane lp(scr.get_y(), scr.get_x());
-		right_pane rp(scr.get_x());
-		keybinds kb;
+		Screen scr;
+		LeftPane lp(scr.get_y(), scr.get_x());
+		RightPane rp(scr.get_x());
+		Keybinds kb;
 		bool is_running = true;
 		timeout(0); //draw window first time instantly
 		while (is_running) {

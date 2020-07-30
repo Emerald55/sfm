@@ -1,9 +1,9 @@
-#ifndef FLAG_PARSE_H
-#define FLAG_PARSE_H
+#ifndef FLAGPARSE_H
+#define FLAGPARSE_H
 
-class flag_parse {
+class FlagParse {
 	public:
-		flag_parse(int argc, char* argv[]);
+		FlagParse(int argc, char* argv[]);
 		inline bool get_start_program() const { return start_program; }
 		inline bool get_show_symbolic_links() const { return show_symbolic_links; }
 		inline bool get_show_hidden_files() const { return show_hidden_files; }

@@ -1,13 +1,13 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <iostream>
-#include "flag_parse.h"
+#include "FlagParse.h"
 
-flag_parse::flag_parse(int argc, char* argv[]) {
+FlagParse::FlagParse(int argc, char* argv[]) {
 	start_program = parse_flags(argc, argv);
 }
 
-bool flag_parse::parse_flags(int argc, char* argv[]) {
+bool FlagParse::parse_flags(int argc, char* argv[]) {
 	const option long_opts[] = {
 		{"help", no_argument, nullptr, 'h'},
 		{"all", no_argument, nullptr, 'a'},

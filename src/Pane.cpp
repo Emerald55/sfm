@@ -3,15 +3,15 @@
 #include <filesystem>
 #include <vector>
 #include <cmath>
-#include "pane.h"
-#include "file_io.h"
-#include "screen_info.h"
-#include "flag_parse.h"
+#include "Pane.h"
+#include "FileIO.h"
+#include "Screen.h"
+#include "FlagParse.h"
 
-void pane::draw_window_files(const screen_info &scr, bool draw_right_pane, 
-		const flag_parse &flags, bool draw_curs) const {
+void Pane::draw_window_files(const Screen &scr, bool draw_right_pane, 
+		const FlagParse &flags, bool draw_curs) const {
 	for (size_t i = 0; i < files.size(); i++) {
-		std::string file = file_io::path_to_filename(files[i]);
+		std::string file = FileIO::path_to_filename(files[i]);
 		std::string num_format = std::to_string(i + scr.get_page() - scr.get_y() + 3) + ".";
 		if (!draw_curs) {
 			num_format = std::to_string(i + 1) + "."; //lets right pane draw proper numbers
@@ -30,7 +30,7 @@ void pane::draw_window_files(const screen_info &scr, bool draw_right_pane,
 		}
 		if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
 			file += " -> ";
-			file += file_io::path_to_filename(std::filesystem::read_symlink(files[i]));
+			file += FileIO::path_to_filename(std::filesystem::read_symlink(files[i]));
 		}
 		const unsigned int current_scr_size = draw_right_pane ? scr.get_x() / 2 - 2 : scr.get_x() - 2;
 		mvwaddnstr(pane, i + 1, 2 + num_format.size(), file.c_str(), current_scr_size - num_format.size() - 1);
@@ -40,7 +40,7 @@ void pane::draw_window_files(const screen_info &scr, bool draw_right_pane,
 	}
 }
 
-void pane::draw_window_info(const screen_info &scr, unsigned int current_dir_size,
+void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 	       	const std::string &current_filepath, bool draw_right_pane) const {
 	std::string line_info;
 	std::string page_info;
@@ -57,7 +57,7 @@ void pane::draw_window_info(const screen_info &scr, unsigned int current_dir_siz
 		page_info = " Page: 0/0 ";
 	}
 	const unsigned int offset = draw_right_pane ? scr.get_x() / 2 : scr.get_x();
-	const std::string owner_and_perm_bits = file_io::get_permbits(current_filepath);
+	const std::string owner_and_perm_bits = FileIO::get_permbits(current_filepath);
 	if (current_dir_size > 0) {
 		mvwaddstr(pane, scr.get_y() - 1, offset - owner_and_perm_bits.size() - line_info.size() -
 				page_info.size() - 8, owner_and_perm_bits.c_str());
@@ -66,10 +66,10 @@ void pane::draw_window_info(const screen_info &scr, unsigned int current_dir_siz
 	mvwaddstr(pane, scr.get_y() - 1, offset - page_info.size() - 2, page_info.c_str());
 }
 
-void pane::draw_window_title(std::string path, const screen_info &scr, bool draw_right_pane) const {
+void Pane::draw_window_title(std::string path, const Screen &scr, bool draw_right_pane) const {
 	const unsigned int scr_center = draw_right_pane ? scr.get_x() / 4 : scr.get_x() / 2;
 	const unsigned int win_width = draw_right_pane ? scr.get_x() / 2 - 2 : scr.get_x() - 2;
-	std::string cut_down_path = file_io::path_to_filename(path);
+	std::string cut_down_path = FileIO::path_to_filename(path);
 	if (std::filesystem::is_directory(path) && path != "/") {
 		path += "/";
 		cut_down_path += "/";
@@ -85,6 +85,6 @@ void pane::draw_window_title(std::string path, const screen_info &scr, bool draw
 	}
 }
 
-pane::~pane() {
+Pane::~Pane() {
 	delwin(pane);
 }

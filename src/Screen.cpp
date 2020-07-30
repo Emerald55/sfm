@@ -1,7 +1,7 @@
 #include <ncurses.h>
-#include "screen_info.h"
+#include "Screen.h"
 
-screen_info::screen_info() {
+Screen::Screen() {
 	start_color();
 	init_pair(1, COLOR_WHITE, COLOR_RED); //cursor
 	init_pair(2, COLOR_YELLOW, COLOR_BLACK); //directories
@@ -18,7 +18,7 @@ screen_info::screen_info() {
 	page = term_height;
 }
 
-void screen_info::check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_right_pane) {
+void Screen::check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_right_pane) {
 	unsigned int check_scr_y, check_scr_x;
 	getmaxyx(stdscr, check_scr_y, check_scr_x);
 	if (check_scr_y > 2 && check_scr_x > 2 &&
@@ -45,7 +45,7 @@ void screen_info::check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_
 	}
 }
 
-void screen_info::reset_to_first_page() {
+void Screen::reset_to_first_page() {
 	curs_y = 0;
 	page = term_height;
 }

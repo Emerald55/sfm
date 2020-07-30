@@ -10,14 +10,14 @@ include_directories(${CURSES_INCLUDE_DIR})
 add_executable(
    "${PROJECT_NAME}"
    src/main.cpp
-   src/flag_parse.cpp
-   src/file_io.cpp
-   src/screen_info.cpp
-   src/input.cpp
-   src/keybinds.cpp
-   src/pane.cpp
-   src/left_pane.cpp
-   src/right_pane.cpp
+   src/FlagParse.cpp
+   src/FileIO.cpp
+   src/Screen.cpp
+   src/Input.cpp
+   src/Keybinds.cpp
+   src/Pane.cpp
+   src/LeftPane.cpp
+   src/RightPane.cpp
 )
 target_link_libraries("${PROJECT_NAME}" ${CURSES_LIBRARIES} stdc++fs)
 
