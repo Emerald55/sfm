@@ -7,10 +7,10 @@
 #include <ncurses.h>
 #include <fstream>
 #include <algorithm>
-#include "file_io.h"
-#include "flag_parse.h"
+#include "FileIO.h"
+#include "FlagParse.h"
 
-std::vector<std::string> file_io::get_file_contents(const std::string &path,
+std::vector<std::string> FileIO::get_file_contents(const std::string &path,
 	       	unsigned int term_height) {
 	std::ifstream file(path);
 	std::vector<std::string> contents;
@@ -31,11 +31,11 @@ std::vector<std::string> file_io::get_file_contents(const std::string &path,
 	return contents;
 }
 
-std::vector<std::string> file_io::get_dir_files(const std::string &path, const flag_parse &flags, 
+std::vector<std::string> FileIO::get_dir_files(const std::string &path, const FlagParse &flags, 
 		const std::string &search_str) {
 	std::vector<std::string> files;
 	for (const auto &entry : std::filesystem::directory_iterator(path)) {
-		if (flags.show_hidden_files) {
+		if (flags.get_show_hidden_files()) {
 			if (path_to_filename(entry.path().string()).find(search_str) !=
 					std::string::npos) {
 				files.push_back(entry.path());
@@ -51,7 +51,7 @@ std::vector<std::string> file_io::get_dir_files(const std::string &path, const f
 	return files;
 }
 
-std::string file_io::get_permbits(const std::string &current_filepath) {
+std::string FileIO::get_permbits(const std::string &current_filepath) {
 	struct stat st;
 	std::string file_perms = " ";
 	if (stat(current_filepath.c_str(), &st) == 0) {

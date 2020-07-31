@@ -1,7 +1,9 @@
 #include <ncurses.h>
-#include "screen_info.h"
+#include "Screen.h"
+#include "LeftPane.h"
+#include "RightPane.h"
 
-screen_info::screen_info() {
+Screen::Screen() {
 	start_color();
 	init_pair(1, COLOR_WHITE, COLOR_RED); //cursor
 	init_pair(2, COLOR_YELLOW, COLOR_BLACK); //directories
@@ -18,7 +20,7 @@ screen_info::screen_info() {
 	page = term_height;
 }
 
-void screen_info::check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_right_pane) {
+void Screen::check_resize(LeftPane &lp, RightPane &rp) {
 	unsigned int check_scr_y, check_scr_x;
 	getmaxyx(stdscr, check_scr_y, check_scr_x);
 	if (check_scr_y > 2 && check_scr_x > 2 &&
@@ -35,12 +37,18 @@ void screen_info::check_resize(WINDOW* left_pane, WINDOW* right_pane, bool draw_
 		if (check_scr_x != x) {
 			x = check_scr_x;
 		}
-		wresize(left_pane, y, x / 2);
-		if (!draw_right_pane) {
-			wresize(left_pane, y, x);
+		if (rp.get_draw()) {
+			lp.resize(x / 2, y);
 		}
-		wresize(right_pane, y, x / 2);
-		mvwin(right_pane, 0, x / 2);
-		
+		else {
+			lp.resize(x, y);
+		}
+		rp.resize(x / 2 + (x % 2), y);
+		rp.reposition(x / 2, 0);
 	}
+}
+
+void Screen::reset_to_first_page() {
+	curs_y = 0;
+	page = term_height;
 }

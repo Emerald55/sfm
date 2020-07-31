@@ -1,13 +1,13 @@
 #ifndef INPUT_H
 #define INPUT_H
 #include <string>
-#include "screen_info.h"
+#include "Screen.h"
 
-struct input {
+struct Input {
 	static std::string input_box(const std::string &text, unsigned int color_type,
-		       	const screen_info &scr, unsigned int win_width = 15);
+		       	const Screen &scr, unsigned int win_width = 15);
 	static void alert_box(const char* text, unsigned int win_width, unsigned int sleep_time,
-			unsigned int alert_color, const screen_info &scr);
+			unsigned int alert_color, const Screen &scr);
 };
 
 #endif
