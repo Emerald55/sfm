@@ -40,7 +40,7 @@ void LeftPane::update(Screen &scr, bool draw_right_pane,
 		}
 		selected_filepath = files[scr.get_curs_y()];
 	}
-	draw_window_files(scr, draw_right_pane, flags, true);
+	draw_window_files(scr, flags, true);
 	draw_window_title(current_path);
 	if (!draw_right_pane) {
 		draw_window_info(scr, size, selected_filepath);

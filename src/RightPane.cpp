@@ -34,7 +34,7 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 				file_content = FileIO::get_file_contents(selected_filepath, scr.get_term_height());
 			}
 			if (std::filesystem::is_directory(selected_filepath)) {
-				draw_window_files(scr, draw, flags);
+				draw_window_files(scr, flags);
 			}
 			else {
 				bool contents_printable = true;

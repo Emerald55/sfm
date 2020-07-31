@@ -18,8 +18,7 @@ std::string Input::input_box(const std::string &text, unsigned int color_type,
 	echo();
 	nocbreak();
 	std::string user_input;
-	for (;;) {
-		const char input_char = wgetch(input_win);
+	while (const char input_char = wgetch(input_win)) {
 		if (input_char == ERR || input_char == '\n') {
 			break;
 		}

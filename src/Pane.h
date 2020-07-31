@@ -19,8 +19,7 @@ class Pane {
 		unsigned int width;
 		unsigned int height;
 		std::vector<std::string> files;
-		void draw_window_files(const Screen &scr, bool draw_right_pane,
-			       	const FlagParse &flags, bool draw_curs = false) const;
+		void draw_window_files(const Screen &scr, const FlagParse &flags, bool draw_curs = false) const;
 		void draw_window_info(const Screen &scr, unsigned int current_dir_size,
 				const std::string &current_filepath) const;
 		void draw_window_title(std::string path) const;

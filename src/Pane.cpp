@@ -18,8 +18,7 @@ void Pane::reposition(unsigned int x, unsigned int y) {
 	mvwin(pane, y, x);
 }
 
-void Pane::draw_window_files(const Screen &scr, bool draw_right_pane, 
-		const FlagParse &flags, bool draw_curs) const {
+void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool draw_curs) const {
 	for (size_t i = 0; i < files.size(); i++) {
 		std::string file = FileIO::path_to_filename(files[i]);
 		std::string num_format = std::to_string(i + scr.get_page() - height + 3) + ".";
@@ -42,8 +41,7 @@ void Pane::draw_window_files(const Screen &scr, bool draw_right_pane,
 			file += " -> ";
 			file += FileIO::path_to_filename(std::filesystem::read_symlink(files[i]));
 		}
-		const unsigned int current_scr_size = draw_right_pane ? scr.get_x() / 2 - 2 : scr.get_x() - 2;
-		mvwaddnstr(pane, i + 1, 2 + num_format.size(), file.c_str(), current_scr_size - num_format.size() - 1);
+		mvwaddnstr(pane, i + 1, 2 + num_format.size(), file.c_str(), width - 2 - num_format.size() - 1);
 		wattroff(pane, COLOR_PAIR(1));
 		wattroff(pane, COLOR_PAIR(2));
 		wattroff(pane, COLOR_PAIR(3));
@@ -55,7 +53,7 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 	std::string line_info;
 	std::string page_info;
 	if (current_dir_size > 0) {
-		line_info = " Line: " + std::to_string(scr.get_curs_y() + 1 + scr.get_page() - scr.get_y() + 2)
+		line_info = " Line: " + std::to_string(scr.get_curs_y() + 1 + scr.get_page() - height + 2)
 			+ "/" + std::to_string(current_dir_size) + " ";
 		const double max_pages = std::ceil(static_cast<double>(current_dir_size) /
 			       	static_cast<double>(scr.get_term_height()));
@@ -68,11 +66,11 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 	}
 	const std::string owner_and_perm_bits = FileIO::get_permbits(current_filepath);
 	if (current_dir_size > 0) {
-		mvwaddstr(pane, scr.get_y() - 1, width - owner_and_perm_bits.size() - line_info.size() -
+		mvwaddstr(pane, height - 1, width - owner_and_perm_bits.size() - line_info.size() -
 				page_info.size() - 8, owner_and_perm_bits.c_str());
 	}
-	mvwaddstr(pane, scr.get_y() - 1, width - line_info.size() - page_info.size() - 5, line_info.c_str());
-	mvwaddstr(pane, scr.get_y() - 1, width - page_info.size() - 2, page_info.c_str());
+	mvwaddstr(pane, height - 1, width - line_info.size() - page_info.size() - 5, line_info.c_str());
+	mvwaddstr(pane, height - 1, width - page_info.size() - 2, page_info.c_str());
 }
 
 void Pane::draw_window_title(std::string path) const {
