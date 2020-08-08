@@ -20,7 +20,7 @@ void Pane::reposition(unsigned int x, unsigned int y) {
 
 void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool draw_curs) const {
 	for (size_t i = 0; i < files.size(); i++) {
-		std::string file = FileIO::path_to_filename(files[i]);
+		std::string file = std::filesystem::path(files[i]).filename();
 		std::string num_format = std::to_string(i + scr.get_page() - height + 3) + ".";
 		if (!draw_curs) {
 			num_format = std::to_string(i + 1) + "."; //lets right pane draw proper numbers
@@ -39,7 +39,7 @@ void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool dra
 		}
 		if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
 			file += " -> ";
-			file += FileIO::path_to_filename(std::filesystem::read_symlink(files[i]));
+			file += std::filesystem::path(std::filesystem::read_symlink(files[i])).filename();
 		}
 		mvwaddnstr(pane, i + 1, 2 + num_format.size(), file.c_str(), width - 2 - num_format.size() - 1);
 		wattroff(pane, COLOR_PAIR(1));
@@ -74,7 +74,7 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 }
 
 void Pane::draw_window_title(std::string path) const {
-	std::string cut_down_path = FileIO::path_to_filename(path);
+	std::string cut_down_path = std::filesystem::path(path).filename();
 	if (std::filesystem::is_directory(path) && path != "/") {
 		path += "/";
 		cut_down_path += "/";

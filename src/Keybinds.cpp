@@ -6,7 +6,6 @@
 #include <cmath>
 #include <sys/wait.h>
 #include "Input.h"
-#include "FileIO.h"
 #include "Keybinds.h"
 #include "LeftPane.h"
 
@@ -111,7 +110,7 @@ void Keybinds::edit_text(const std::string &selected_filepath) const {
 	if (pid == 0) {
 		try {
 			const std::string editor = std::getenv("EDITOR");
-			execl(editor.c_str(), FileIO::path_to_filename(editor).c_str(),
+			execl(editor.c_str(), std::filesystem::path(editor).filename().string().c_str(),
 					selected_filepath.c_str(), (char*)0);
 		}
 		catch (const std::exception &e) {
@@ -134,7 +133,7 @@ void Keybinds::pager(const std::string &selected_filepath) const {
 	if (pid == 0) {
 		try {
 			const std::string pager = std::getenv("PAGER");
-			execl(pager.c_str(), FileIO::path_to_filename(pager).c_str(), 
+			execl(pager.c_str(), std::filesystem::path(pager).filename().string().c_str(), 
 				       selected_filepath.c_str(), (char*)0);
 		}
 		catch (const std::exception &e) {
@@ -157,7 +156,7 @@ void Keybinds::spawn_shell() const {
 	if (pid == 0) {
 		try {
 			const std::string shell = std::getenv("SHELL");
-			execl(shell.c_str(), FileIO::path_to_filename(shell).c_str(), (char*)0);
+			execl(shell.c_str(), std::filesystem::path(shell).filename().string().c_str(), (char*)0);
 		}
 		catch (const std::exception &e) {
 			std::cerr << "\"$SHELL\" environmental variable not set.\n";
@@ -217,8 +216,8 @@ void Keybinds::rename(const Screen &scr, const std::string &selected_filepath) c
 void Keybinds::copy(const Screen &scr, const std::string &selected_filepath) {
 	copy_path = selected_filepath;
 	cut_path = false;
-	Input::alert_box((" Copied: " + FileIO::path_to_filename(selected_filepath) + " ").c_str(),
-			10 + FileIO::path_to_filename(selected_filepath).size(), 500, 4, scr);
+	Input::alert_box((" Copied: " + std::filesystem::path(selected_filepath).filename().string() + " ").c_str(),
+			10 + std::filesystem::path(selected_filepath).filename().string().size(), 500, 4, scr);
 }
 
 void Keybinds::cut(const Screen &scr, const std::string &selected_filepath) {
@@ -233,18 +232,18 @@ void Keybinds::cut(const Screen &scr, const std::string &selected_filepath) {
 void Keybinds::paste(Screen &scr, const std::string &current_path) {
 	if (std::filesystem::exists(copy_path)) {
 		try {
-			std::filesystem::copy(copy_path, current_path + "/" + FileIO::path_to_filename(copy_path),
+			std::filesystem::copy(copy_path, current_path + "/" + std::filesystem::path(copy_path).filename().string(),
 					std::filesystem::copy_options::recursive);
 			if (cut_path) {
-				Input::alert_box((" Cut: " + FileIO::path_to_filename(copy_path) + " ").c_str(),
-						7 + FileIO::path_to_filename(copy_path).size(), 500, 4, scr);
+				Input::alert_box((" Cut: " + std::filesystem::path(copy_path).filename().string() + " ").c_str(),
+						7 + std::filesystem::path(copy_path).filename().string().size(), 500, 4, scr);
 				std::filesystem::remove_all(copy_path);
 				scr.reset_to_first_page();
 				cut_path = false;
 			}
 			else {
-				Input::alert_box((" Pasted: " + FileIO::path_to_filename(copy_path) + " ").c_str(),
-						10 + FileIO::path_to_filename(copy_path).size(), 500, 4, scr);
+				Input::alert_box((" Pasted: " + std::filesystem::path(copy_path).filename().string() + " ").c_str(),
+						10 + std::filesystem::path(copy_path).filename().string().size(), 500, 4, scr);
 			}
 		}
 		catch (std::exception& e) {

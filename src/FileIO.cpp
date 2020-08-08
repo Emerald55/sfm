@@ -36,13 +36,13 @@ std::vector<std::string> FileIO::get_dir_files(const std::string &path, const Fl
 	std::vector<std::string> files;
 	for (const auto &entry : std::filesystem::directory_iterator(path)) {
 		if (flags.get_show_hidden_files()) {
-			if (path_to_filename(entry.path().string()).find(search_str) !=
+			if (entry.path().filename().string().find(search_str) !=
 					std::string::npos) {
 				files.push_back(entry.path());
 			}
 		}
-		else if (path_to_filename(entry.path().string()).rfind(".", 0) != 0) {
-			if (path_to_filename(entry.path().string()).find(search_str) !=
+		else if (entry.path().filename().string().rfind(".", 0) != 0) {
+			if (entry.path().filename().string().find(search_str) !=
 					std::string::npos) {
 				files.push_back(entry.path());
 			}
