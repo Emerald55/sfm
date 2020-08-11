@@ -20,13 +20,16 @@ bool Keybinds::quit(const Screen &scr) const {
 void Keybinds::move_left(Screen &scr) {
 	scr.reset_to_first_page();
 	search_str = "";
-	chdir("..");
+	const int err = chdir("..");
+	if (err == -1) {
+		Input::alert_box(" Error going back ", 18, 750, 5, scr);
+	}
 }
 
 void Keybinds::move_right(Screen &scr,
 	       	const std::string &selected_filepath) {
 	if (std::filesystem::is_directory(selected_filepath)) {
-		int err = chdir(selected_filepath.c_str());
+		const int err = chdir(selected_filepath.c_str());
 		if (err == -1) {
 			Input::alert_box(" Invalid Permission ", 20, 750, 5, scr);
 		}
