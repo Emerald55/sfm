@@ -22,7 +22,7 @@ void Keybinds::move_left(Screen &scr) {
 	search_str = "";
 	const int err = chdir("..");
 	if (err == -1) {
-		Input::alert_box(" Error going back ", 18, 750, 5, scr);
+		Input::alert_box(" Error going back ", 750, 5, scr);
 	}
 }
 
@@ -31,7 +31,7 @@ void Keybinds::move_right(Screen &scr,
 	if (std::filesystem::is_directory(selected_filepath)) {
 		const int err = chdir(selected_filepath.c_str());
 		if (err == -1) {
-			Input::alert_box(" Invalid Permission ", 20, 750, 5, scr);
+			Input::alert_box(" Invalid Permission ", 750, 5, scr);
 		}
 		else {
 			scr.reset_to_first_page();
@@ -99,10 +99,10 @@ void Keybinds::jump_to_line(Screen &scr, size_t left_pane_size) const {
 		
 	}
 	catch (const std::invalid_argument &) {
-		Input::alert_box(" Not A Number ", 14, 750, 5, scr);
+		Input::alert_box(" Not A Number ", 750, 5, scr);
 	}
 	catch (const std::out_of_range &) {
-		Input::alert_box(" Too large of a number ", 23, 750, 5, scr);
+		Input::alert_box(" Too large of a number ", 750, 5, scr);
 	}
 }
 
@@ -200,7 +200,7 @@ void Keybinds::remove(const Screen &scr, const std::string &selected_filepath) c
 		}
 	}
 	catch (const std::filesystem::filesystem_error &) {
-		Input::alert_box(" Delete Failed ", 15, 750, 5, scr);
+		Input::alert_box(" Delete Failed ", 750, 5, scr);
 	}
 }
 
@@ -211,7 +211,7 @@ void Keybinds::rename(const Screen &scr, const std::string &selected_filepath) c
 			std::filesystem::rename(selected_filepath, user_input);
 		}
 		catch (const std::filesystem::filesystem_error &) {
-			Input::alert_box(" Invalid Filename ", 18, 750, 5, scr);
+			Input::alert_box(" Invalid Filename ", 750, 5, scr);
 		}
 	}
 }
@@ -220,7 +220,7 @@ void Keybinds::copy(const Screen &scr, const std::string &selected_filepath) {
 	copy_path = selected_filepath;
 	cut_path = false;
 	Input::alert_box((" Copied: " + std::filesystem::path(selected_filepath).filename().string() + " ").c_str(),
-			10 + std::filesystem::path(selected_filepath).filename().string().size(), 500, 4, scr);
+			500, 4, scr);
 }
 
 void Keybinds::cut(const Screen &scr, const std::string &selected_filepath) {
@@ -239,23 +239,23 @@ void Keybinds::paste(Screen &scr, const std::string &current_path) {
 					std::filesystem::copy_options::recursive);
 			if (cut_path) {
 				Input::alert_box((" Cut: " + std::filesystem::path(copy_path).filename().string() + " ").c_str(),
-						7 + std::filesystem::path(copy_path).filename().string().size(), 500, 4, scr);
+						500, 4, scr);
 				std::filesystem::remove_all(copy_path);
 				scr.reset_to_first_page();
 				cut_path = false;
 			}
 			else {
 				Input::alert_box((" Pasted: " + std::filesystem::path(copy_path).filename().string() + " ").c_str(),
-						10 + std::filesystem::path(copy_path).filename().string().size(), 500, 4, scr);
+						500, 4, scr);
 			}
 		}
 		catch (std::exception& e) {
 			if (cut_path) {
-				Input::alert_box(" Cut Failed ", 12, 750, 5, scr);
+				Input::alert_box(" Cut Failed ", 750, 5, scr);
 				cut_path = false;
 			}
 			else {
-				Input::alert_box(" Paste Failed ", 14, 750, 5, scr);
+				Input::alert_box(" Paste Failed ", 750, 5, scr);
 			}
 		}
 	}
