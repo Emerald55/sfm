@@ -13,7 +13,7 @@ RightPane::RightPane(unsigned int width, unsigned int height) {
 }
 
 void RightPane::update(const Screen &scr, const std::string &selected_filepath,
-	       	size_t left_pane_size, const FlagParse &flags) {
+	       	size_t left_pane_size, size_t search_length, const FlagParse &flags) {
 	werase(pane);
 	if (draw) {
 		files.clear();
@@ -48,7 +48,7 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 			}
 		}
 		draw_window_title(selected_filepath);
-		draw_window_info(scr, left_pane_size, selected_filepath);
+		draw_window_info(scr, left_pane_size, selected_filepath, search_length);
 		wrefresh(pane);
 	}
 }

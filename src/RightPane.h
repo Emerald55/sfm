@@ -11,7 +11,7 @@ class RightPane : public Pane {
 	public:
 		RightPane(unsigned int width, unsigned int height);
 		void update(const Screen &scr, const std::string &selected_filepath, size_t left_pane_size, 
-				const FlagParse &flags);
+				size_t search_length, const FlagParse &flags);
 		inline bool get_draw() const { return draw; }
 		inline void set_draw(bool draw) { this->draw = draw; }
 	private:

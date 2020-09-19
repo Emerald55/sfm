@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 		while (is_running) {
 			scr.check_resize(lp, rp);
 			lp.update(scr, rp.get_draw(), kb.get_search_str(), flags);
-			rp.update(scr, lp.get_selected_filepath(), lp.get_size(), flags);
+			rp.update(scr, lp.get_selected_filepath(), lp.get_size(), kb.get_search_str().size(), flags);
 			const wchar_t input = getch();
 			switch (input) {
 				case 'q':
