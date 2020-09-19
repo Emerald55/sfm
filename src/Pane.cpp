@@ -67,7 +67,7 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 	const std::string owner_and_perm_bits = FileIO::get_permbits(current_filepath);
 	if (search_length != 0) {
 		mvwaddstr(pane, height - 1, width - owner_and_perm_bits.size() - 
-				line_info.size() - page_info.size() - 10, " S");
+				line_info.size() - page_info.size() - 10, " S ");
 	}
 	if (current_dir_size > 0) {
 		mvwaddstr(pane, height - 1, width - owner_and_perm_bits.size() - line_info.size() -
