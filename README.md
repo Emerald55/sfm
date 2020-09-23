@@ -12,4 +12,5 @@ cd build
 cmake .. && sudo make install
 sfm
 ```
-Make sure to have $EDITOR, $SHELL, and $PAGER environmental variables set.
+Make sure to have $EDITOR, $SHELL, and $PAGER environmental variables set.</br>
+Press '?' to get the list of keybindings.

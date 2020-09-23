@@ -43,7 +43,7 @@ void LeftPane::update(Screen &scr, bool draw_right_pane,
 	draw_window_files(scr, flags, true);
 	draw_window_title(current_path);
 	if (!draw_right_pane) {
-		draw_window_info(scr, size, selected_filepath);
+		draw_window_info(scr, size, selected_filepath, search_str.size());
 	}
 	wrefresh(pane);
 }

@@ -2,6 +2,7 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include <cstring>
 #include "Input.h"
 #include "Screen.h"
 
@@ -33,10 +34,9 @@ std::string Input::input_box(const std::string &text, unsigned int color_type,
 	return user_input;
 }
 
-void Input::alert_box(const char* text, unsigned int win_width, 
-		unsigned int sleep_time, unsigned int alert_color, 
-		const Screen &scr) {
-	WINDOW *alert_win = newwin(1, win_width, scr.get_y() - 1, 2);
+void Input::alert_box(const char* text, unsigned int sleep_time, 
+		unsigned int alert_color, const Screen &scr) {
+	WINDOW *alert_win = newwin(1, strlen(text), scr.get_y() - 1, 2);
 	wattron(alert_win, COLOR_PAIR(alert_color));
 	mvwaddstr(alert_win, 0, 0, text);
 	wattroff(alert_win, COLOR_PAIR(alert_color));
