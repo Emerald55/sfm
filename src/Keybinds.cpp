@@ -42,11 +42,10 @@ void Keybinds::move_right(Screen &scr,
 
 void Keybinds::move_up(Screen &scr) const {
 	if (scr.get_curs_y() > 0) {
-		scr.set_curs_y(scr.get_curs_y() - 1);
+		scr.set(scr.get_curs_y() - 1, std::nullopt);
 	}
 	else if (scr.get_page() != scr.get_term_height()) {
-		scr.set_curs_y(scr.get_term_height() - 1);
-		scr.set_page(scr.get_page() - scr.get_term_height());
+		scr.set(scr.get_term_height() - 1, scr.get_page() - scr.get_term_height());
 	}
 }
 
@@ -54,32 +53,29 @@ void Keybinds::move_down(Screen &scr, size_t left_pane_size_currently,
 		size_t left_pane_size) const {
 	if (left_pane_size_currently > 0) {
 		if (scr.get_curs_y() < left_pane_size_currently - 1) {
-			scr.set_curs_y(scr.get_curs_y() + 1);
+			scr.set(scr.get_curs_y() + 1, std::nullopt);
 		}
 		else if ((scr.get_curs_y() + 1 + scr.get_page() - scr.get_y() + 2) != left_pane_size) {
-			scr.set_page(scr.get_page() + scr.get_term_height());
-			scr.set_curs_y(0);
+			scr.set(0, scr.get_page() + scr.get_term_height());
 		}
 	}
 }
 
 void Keybinds::jump_to_bottom(Screen &scr, size_t left_pane_size_currently) const {
 	if (left_pane_size_currently > 0) {
-		scr.set_curs_y(left_pane_size_currently - 1);
+		scr.set(left_pane_size_currently - 1, std::nullopt);
 	}
 }
 
 void Keybinds::up_page(Screen &scr) const {
 	if (scr.get_page() != scr.get_term_height()) {
-		scr.set_page(scr.get_page() - scr.get_term_height());
-		scr.set_curs_y(0);
+		scr.set(0, scr.get_page() - scr.get_term_height());
 	}
 }
 
 void Keybinds::down_page(Screen &scr, size_t left_pane_size) const {
 	if (left_pane_size > scr.get_page()) {
-		scr.set_page(scr.get_page() + scr.get_term_height());
-		scr.set_curs_y(0);
+		scr.set(0, scr.get_page() + scr.get_term_height());
 	}
 }
 
@@ -92,9 +88,8 @@ void Keybinds::jump_to_line(Screen &scr, size_t left_pane_size) const {
 			if (std::stoul(user_input) == scr.get_term_height() || cursor_location == 0) {
 				cursor_location = scr.get_term_height();
 			}
-			scr.set_page(static_cast<unsigned int>(std::ceil(static_cast<double>(std::stoi(user_input))
+			scr.set(cursor_location - 1, static_cast<unsigned int>(std::ceil(static_cast<double>(std::stoi(user_input))
 						/ static_cast<double>(scr.get_term_height()))) * scr.get_term_height());
-			scr.set_curs_y(cursor_location - 1);
 		}
 		
 	}
@@ -179,8 +174,10 @@ void Keybinds::xdg_open(const std::string &selected_filepath) const {
 	endwin();
 	pid_t pid = fork();
 	if (pid == 0) {
-		execl("/usr/bin/xdg-open", "xdg-open",
-				selected_filepath.c_str(), (char*)0);
+		if (execl("/usr/bin/xdg-open", "xdg-open",
+			selected_filepath.c_str(), (char*)0) == -1) {
+			std::cerr << "Xdg-open failed to open.\n";
+		}
 		exit(1);
 	}
 	int ret;
@@ -261,24 +258,26 @@ void Keybinds::paste(Screen &scr, const std::string &current_path) {
 	}
 }
 
-void Keybinds::search(Screen &scr) {
+bool Keybinds::search(Screen &scr) {
 	if (search_str.empty()) {
 		std::string user_input = Input::input_box(" Search: ", 4, scr);
 		if (!user_input.empty()) {
 			search_str = user_input;
 			scr.reset_to_first_page();
+			return true;
 		}
 	}
 	else {
 		search_str = "";
 		scr.reset_to_first_page();
 	}
+	return false;
 }
 
-bool Keybinds::screen_change(const Screen &scr, LeftPane &lp, bool draw_right_pane) const {
+bool Keybinds::screen_change(const Screen &scr, LeftPane *lp, bool draw_right_pane) const {
 	const unsigned int win_resize_width = draw_right_pane ? scr.get_x() : scr.get_x() / 2;
 	draw_right_pane = !draw_right_pane;
-	lp.resize(win_resize_width, scr.get_y());
+	lp->resize(win_resize_width, scr.get_y());
 	return draw_right_pane;
 }
 

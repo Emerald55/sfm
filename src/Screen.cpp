@@ -52,3 +52,12 @@ void Screen::reset_to_first_page() {
 	curs_y = 0;
 	page = term_height;
 }
+
+void Screen::set(std::optional<unsigned int> curs_y, std::optional<unsigned int> page) {
+	if (page) {
+		this->page = page.value();
+	}
+	if (curs_y) {
+		this->curs_y = curs_y.value();
+	}
+}

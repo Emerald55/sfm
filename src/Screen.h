@@ -1,5 +1,6 @@
 #ifndef SCREEN_H
 #define SCREEN_H
+#include <optional>
 #include <ncurses.h>
 
 class RightPane;
@@ -11,13 +12,13 @@ class Screen {
 		Screen();
 		void check_resize(LeftPane &lp, RightPane &rp);
 		void reset_to_first_page();
+		void set(std::optional<unsigned int> curs_y = std::nullopt, 
+				std::optional<unsigned int> page = std::nullopt);
 		inline unsigned int get_y() const { return y; }
 		inline unsigned int get_x() const { return x; }
 		inline unsigned int get_term_height() const { return term_height; };
 		inline unsigned int get_curs_y() const { return curs_y; };
-		inline void set_curs_y(unsigned int curs_y) { this->curs_y = curs_y; }
 		inline unsigned int get_page() const { return page; };
-		inline void set_page(unsigned int page) { this->page = page; }
 	private:
 		unsigned int y;
 		unsigned int x;

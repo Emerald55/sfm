@@ -49,7 +49,7 @@ void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool dra
 }
 
 void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
-	       	const std::string &current_filepath, size_t search_length) const {
+	       	const std::string &current_filepath, bool searching) const {
 	std::string line_info;
 	std::string page_info;
 	if (current_dir_size > 0) {
@@ -65,7 +65,7 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 		page_info = " Page: 0/0 ";
 	}
 	const std::string owner_and_perm_bits = FileIO::get_permbits(current_filepath);
-	if (search_length != 0) {
+	if (searching) {
 		mvwaddstr(pane, height - 1, width - owner_and_perm_bits.size() - 
 				line_info.size() - page_info.size() - 10, " S ");
 	}
