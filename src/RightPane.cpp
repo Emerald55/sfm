@@ -13,7 +13,7 @@ RightPane::RightPane(unsigned int width, unsigned int height) {
 }
 
 void RightPane::update(const Screen &scr, const std::string &selected_filepath,
-	       	size_t left_pane_size, size_t search_length, const FlagParse &flags) {
+	       	size_t left_pane_size, bool searching, const FlagParse &flags) {
 	werase(pane);
 	if (draw) {
 		files.clear();
@@ -21,7 +21,7 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 		box(pane, 0, 0);
 		if (left_pane_size != 0) {
 			try {
-				if (std::filesystem::is_directory(selected_filepath) && draw) {
+				if (std::filesystem::is_directory(selected_filepath)) {
 					files = FileIO::get_dir_files(selected_filepath, flags);
 					std::sort(files.begin(), files.end());
 					if (files.size() > scr.get_term_height()) {
@@ -48,7 +48,7 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 			}
 		}
 		draw_window_title(selected_filepath);
-		draw_window_info(scr, left_pane_size, selected_filepath, search_length);
+		draw_window_info(scr, left_pane_size, selected_filepath, searching);
 		wrefresh(pane);
 	}
 }
