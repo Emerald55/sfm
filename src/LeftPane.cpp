@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <string>
+#include <filesystem>
 #include <cmath>
 #include "LeftPane.h"
 #include "RightPane.h"
