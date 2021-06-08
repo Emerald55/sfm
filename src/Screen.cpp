@@ -24,7 +24,7 @@ void Screen::check_resize(LeftPane &lp, RightPane &rp) {
 	unsigned int check_scr_y, check_scr_x;
 	getmaxyx(stdscr, check_scr_y, check_scr_x);
 	if (check_scr_y > 2 && check_scr_x > 2 &&
-		       	(check_scr_y != y || check_scr_x != x)) { //too small of a screen causes crash
+		       	(check_scr_y != y || check_scr_x != x)) { //too small of a screen to split into two
 		if (check_scr_y != y) {
 			y = check_scr_y;
 			const unsigned int page_number = page / term_height;

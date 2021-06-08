@@ -34,7 +34,8 @@ std::vector<std::string> FileIO::get_file_contents(const std::string &path,
 std::vector<std::string> FileIO::get_dir_files(const std::string &path, const FlagParse &flags, 
 		const std::string &search_str) {
 	std::vector<std::string> files;
-	for (const auto &entry : std::filesystem::directory_iterator(path)) {
+	for (const auto &entry : std::filesystem::directory_iterator(path,
+			std::filesystem::directory_options::skip_permission_denied)) {
 		if (flags.get_show_hidden_files()) {
 			if (entry.path().filename().string().find(search_str) !=
 					std::string::npos) {
