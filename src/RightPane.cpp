@@ -29,23 +29,23 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 					}
 				
 				}
-			} catch (const std::filesystem::filesystem_error &) {} //no permission to read contents
-			if (FileIO::file_contents_printable(selected_filepath)) {
-				file_content = FileIO::get_file_contents(selected_filepath, scr.get_term_height());
-			}
-			if (std::filesystem::is_directory(selected_filepath)) {
-				draw_window_files(scr, flags);
-			}
-			else {
-				bool contents_printable = true;
-				for (const auto &line : file_content) {
-					if (line.find('\0') != std::string::npos) {
-						contents_printable = false;
-						break;
-					}
+				if (FileIO::file_contents_printable(selected_filepath)) {
+					file_content = FileIO::get_file_contents(selected_filepath, scr.get_term_height());
 				}
-				draw_window_file_contents(contents_printable);
-			}
+				if (std::filesystem::is_directory(selected_filepath)) {
+					draw_window_files(scr, flags);
+				}
+				else {
+					bool contents_printable = true;
+					for (const auto &line : file_content) {
+						if (line.find('\0') != std::string::npos) {
+							contents_printable = false;
+							break;
+						}
+					}
+					draw_window_file_contents(contents_printable);
+				}
+			} catch (const std::filesystem::filesystem_error &) {} //no permission to read contents
 		}
 		draw_window_title(selected_filepath);
 		draw_window_info(scr, left_pane_size, selected_filepath, searching);

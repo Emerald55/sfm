@@ -44,10 +44,12 @@ void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool dra
 				wattron(pane, COLOR_PAIR(7));
 			}
 		}
-		if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
-			file += " -> ";
-			file += std::filesystem::path(std::filesystem::read_symlink(files[i])).filename();
-		}
+		try {
+			if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
+				file += " -> ";
+				file += std::filesystem::path(std::filesystem::read_symlink(files[i])).filename();
+			}
+		} catch (const std::filesystem::filesystem_error &) {} //ignore failed is_symlink()
 		mvwaddnstr(pane, i + 1, 2 + num_format.size(), file.c_str(), width - 2 - num_format.size() - 1);
 		wattroff(pane, COLOR_PAIR(1));
 		wattroff(pane, COLOR_PAIR(2));
@@ -87,10 +89,13 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 
 void Pane::draw_window_title(std::string path) const {
 	std::string cut_down_path = std::filesystem::path(path).filename();
-	if (std::filesystem::is_directory(path) && path != "/") {
-		path += "/";
-		cut_down_path += "/";
+	try {
+		if (std::filesystem::is_directory(path) && path != "/") {
+			path += "/";
+			cut_down_path += "/";
+		}
 	}
+	catch (const std::filesystem::filesystem_error &) {} //ignore failed is_directory()
 	if (path.size() < width - 2) {
 		mvwaddstr(pane, 0, width / 2 - (path.size() / 2), (" " + path + " ").c_str());
 	}
