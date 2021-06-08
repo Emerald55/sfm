@@ -71,5 +71,8 @@ std::string FileIO::get_permbits(const std::string &current_filepath) {
 		pwd = getpwuid(st.st_uid);
 		file_perms = file_perms + " " + pwd->pw_name + " ";
 	}
+	else {
+		file_perms = "?";
+	}
 	return file_perms;
 }
