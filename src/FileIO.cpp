@@ -76,3 +76,24 @@ std::string FileIO::get_permbits(const std::string &current_filepath) {
 	}
 	return file_perms;
 }
+
+bool FileIO::file_contents_printable(const std::string &path) {
+	try {
+		switch (std::filesystem::status(path).type()) {
+			case std::filesystem::file_type::none:
+			case std::filesystem::file_type::not_found:
+			case std::filesystem::file_type::unknown:
+			case std::filesystem::file_type::directory:
+			case std::filesystem::file_type::block:
+			case std::filesystem::file_type::character:
+			case std::filesystem::file_type::fifo:
+			case std::filesystem::file_type::socket:
+				return false;
+			default:
+				return true;
+		}
+	}
+	catch (const std::filesystem::filesystem_error &) {
+		return false;
+	}
+}
