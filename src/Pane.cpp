@@ -28,23 +28,33 @@ void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool dra
 		wattron(pane, COLOR_PAIR(3));
 		mvwaddstr(pane, i + 1, 1, num_format.c_str());
 		wattroff(pane, COLOR_PAIR(3));
-		if (i == scr.get_curs_y() && draw_curs && std::filesystem::is_directory(files[i])) { //highlight file where cursor is
-			wattron(pane, COLOR_PAIR(6));
+		try {
+			if (i == scr.get_curs_y() && draw_curs && std::filesystem::is_directory(files[i])) { //highlight file where cursor is
+				wattron(pane, COLOR_PAIR(6));
+			}
+			else if (i == scr.get_curs_y() && draw_curs) {
+				wattron(pane, COLOR_PAIR(1));
+			}
+			else if (std::filesystem::is_directory(files[i])) {
+				wattron(pane, COLOR_PAIR(2));
+			}
 		}
-		else if (i == scr.get_curs_y() && draw_curs) {
-			wattron(pane, COLOR_PAIR(1));
+		catch (const std::filesystem::filesystem_error &) {
+			if (i == scr.get_curs_y() && draw_curs) {
+				wattron(pane, COLOR_PAIR(7));
+			}
 		}
-		else if (std::filesystem::is_directory(files[i])) {
-			wattron(pane, COLOR_PAIR(2));
-		}
-		if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
-			file += " -> ";
-			file += std::filesystem::path(std::filesystem::read_symlink(files[i])).filename();
-		}
+		try {
+			if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
+				file += " -> ";
+				file += std::filesystem::path(std::filesystem::read_symlink(files[i])).filename();
+			}
+		} catch (const std::filesystem::filesystem_error &) {} //ignore failed is_symlink()
 		mvwaddnstr(pane, i + 1, 2 + num_format.size(), file.c_str(), width - 2 - num_format.size() - 1);
 		wattroff(pane, COLOR_PAIR(1));
 		wattroff(pane, COLOR_PAIR(2));
 		wattroff(pane, COLOR_PAIR(3));
+		wattroff(pane, COLOR_PAIR(7));
 	}
 }
 
@@ -79,10 +89,13 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 
 void Pane::draw_window_title(std::string path) const {
 	std::string cut_down_path = std::filesystem::path(path).filename();
-	if (std::filesystem::is_directory(path) && path != "/") {
-		path += "/";
-		cut_down_path += "/";
+	try {
+		if (std::filesystem::is_directory(path) && path != "/") {
+			path += "/";
+			cut_down_path += "/";
+		}
 	}
+	catch (const std::filesystem::filesystem_error &) {} //ignore failed is_directory()
 	if (path.size() < width - 2) {
 		mvwaddstr(pane, 0, width / 2 - (path.size() / 2), (" " + path + " ").c_str());
 	}

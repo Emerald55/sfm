@@ -10,7 +10,7 @@
 #include "LeftPane.h"
 
 bool Keybinds::quit(const Screen &scr) const {
-	std::string user_input = Input::input_box(" Quit? [Y/n]: ", 5, scr, 2);
+	const std::string user_input = Input::input_box(" Quit? [Y/n]: ", 5, scr, 2);
 	if (user_input.empty() || user_input == "y" || user_input == "Y") {
 		return false;
 	}
@@ -28,15 +28,20 @@ void Keybinds::move_left(Screen &scr) {
 
 void Keybinds::move_right(Screen &scr,
 	       	const std::string &selected_filepath) {
-	if (std::filesystem::is_directory(selected_filepath)) {
-		const int err = chdir(selected_filepath.c_str());
-		if (err == -1) {
-			Input::alert_box(" Invalid Permission ", 750, 5, scr);
+	try {
+		if (std::filesystem::is_directory(selected_filepath)) {
+			const int err = chdir(selected_filepath.c_str());
+			if (err == -1) {
+				Input::alert_box(" Invalid Permission ", 750, 5, scr);
+			}
+			else {
+				scr.reset_to_first_page();
+				search_str = "";
+			}
 		}
-		else {
-			scr.reset_to_first_page();
-			search_str = "";
-		}
+	}
+	catch (const std::filesystem::filesystem_error &) {
+		Input::alert_box(" Invalid Permission ", 750, 5, scr);
 	}
 }
 
@@ -80,7 +85,7 @@ void Keybinds::down_page(Screen &scr, size_t left_pane_size) const {
 }
 
 void Keybinds::jump_to_line(Screen &scr, size_t left_pane_size) const {
-	std::string user_input = Input::input_box(" Jump To: ", 4, scr, 10);
+	const std::string user_input = Input::input_box(" Jump To: ", 4, scr, 10);
 	try {
 		if (!user_input.empty() && std::stoul(user_input) > 0 && std::stoul(user_input) <= 
 				left_pane_size) {
@@ -189,7 +194,7 @@ void Keybinds::xdg_open(const std::string &selected_filepath) const {
 }
 
 void Keybinds::remove(const Screen &scr, const std::string &selected_filepath) const {
-	std::string user_input = Input::input_box(" Delete File/Directory? [y/N]: ", 5, scr, 2);
+	const std::string user_input = Input::input_box(" Delete File/Directory? [y/N]: ", 5, scr, 2);
 	try {
 		if (std::filesystem::exists(selected_filepath) &&
 				(user_input == "Y" || user_input == "y")) {
@@ -202,14 +207,14 @@ void Keybinds::remove(const Screen &scr, const std::string &selected_filepath) c
 }
 
 void Keybinds::rename(const Screen &scr, const std::string &selected_filepath) const {
-	std::string user_input = Input::input_box(" Rename: ", 4, scr);
-	if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
-		try {
+	const std::string user_input = Input::input_box(" Rename: ", 4, scr);
+	try {
+		if (!user_input.empty() && std::filesystem::exists(selected_filepath)) {
 			std::filesystem::rename(selected_filepath, user_input);
 		}
-		catch (const std::filesystem::filesystem_error &) {
-			Input::alert_box(" Invalid Filename ", 750, 5, scr);
-		}
+	}
+	catch (const std::filesystem::filesystem_error &) {
+		Input::alert_box(" Invalid Filename ", 750, 5, scr);
 	}
 }
 
@@ -221,17 +226,23 @@ void Keybinds::copy(const Screen &scr, const std::string &selected_filepath) {
 }
 
 void Keybinds::cut(const Screen &scr, const std::string &selected_filepath) {
-	std::string user_input = Input::input_box(" Cut File/Directory? [y/N]: ", 5, scr, 2);
-	if (std::filesystem::exists(selected_filepath) &&
-			(user_input == "y" || user_input == "Y")) {
-		copy_path = selected_filepath;
-		cut_path = true;
+	const std::string user_input = Input::input_box(" Cut File/Directory? [y/N]: ", 5, scr, 2);
+	try {
+		if (std::filesystem::exists(selected_filepath) &&
+				(user_input == "y" || user_input == "Y")) {
+			copy_path = selected_filepath;
+			cut_path = true;
+		}
+	}
+	catch (const std::filesystem::filesystem_error &) {
+		Input::alert_box(" Cut Failed ", 750, 5, scr);
+		cut_path = false;
 	}
 }
 
 void Keybinds::paste(Screen &scr, const std::string &current_path) {
-	if (std::filesystem::exists(copy_path)) {
-		try {
+	try {
+		if (std::filesystem::exists(copy_path)) {
 			std::filesystem::copy(copy_path, current_path + "/" + std::filesystem::path(copy_path).filename().string(),
 					std::filesystem::copy_options::recursive);
 			if (cut_path) {
@@ -246,21 +257,21 @@ void Keybinds::paste(Screen &scr, const std::string &current_path) {
 						500, 4, scr);
 			}
 		}
-		catch (std::exception& e) {
-			if (cut_path) {
-				Input::alert_box(" Cut Failed ", 750, 5, scr);
-				cut_path = false;
-			}
-			else {
-				Input::alert_box(" Paste Failed ", 750, 5, scr);
-			}
+	}
+	catch (const std::filesystem::filesystem_error &) {
+		if (cut_path) {
+			Input::alert_box(" Cut Failed ", 750, 5, scr);
+			cut_path = false;
+		}
+		else {
+			Input::alert_box(" Paste Failed ", 750, 5, scr);
 		}
 	}
 }
 
 bool Keybinds::search(Screen &scr) {
 	if (search_str.empty()) {
-		std::string user_input = Input::input_box(" Search: ", 4, scr);
+		const std::string user_input = Input::input_box(" Search: ", 4, scr);
 		if (!user_input.empty()) {
 			search_str = user_input;
 			scr.reset_to_first_page();
