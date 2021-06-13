@@ -24,7 +24,7 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 				if (std::filesystem::is_directory(selected_filepath)) {
 					files = FileIO::get_dir_files(selected_filepath, flags);
 					std::sort(files.begin(), files.end());
-					if (files.size() > scr.get_term_height()) {
+					if (files.size() > scr.get_term_height()) { //remove files you cant see
 						files.erase(files.begin() + scr.get_term_height(), files.end());
 					}
 					draw_window_files(scr, flags);
