@@ -77,20 +77,20 @@ void Pane::draw_window_info(const Screen &scr, unsigned int current_dir_size,
 	const std::string owner_and_perm_bits = FileIO::get_permbits(current_filepath);
 	if (searching) {
 		mvwaddstr(pane, height - 1, width - owner_and_perm_bits.size() - 
-				line_info.size() - page_info.size() - 10, " S ");
+				line_info.size() - page_info.size() - 10, " S "); //search notification icon
 	}
 	if (current_dir_size > 0) {
 		mvwaddstr(pane, height - 1, width - owner_and_perm_bits.size() - line_info.size() -
-				page_info.size() - 8, owner_and_perm_bits.c_str());
+				page_info.size() - 8, owner_and_perm_bits.c_str()); //file owner and permission info
 	}
-	mvwaddstr(pane, height - 1, width - line_info.size() - page_info.size() - 5, line_info.c_str());
-	mvwaddstr(pane, height - 1, width - page_info.size() - 2, page_info.c_str());
+	mvwaddstr(pane, height - 1, width - line_info.size() - page_info.size() - 5, line_info.c_str()); //line info
+	mvwaddstr(pane, height - 1, width - page_info.size() - 2, page_info.c_str()); //page info
 }
 
 void Pane::draw_window_title(std::string path) const {
 	std::string cut_down_path = std::filesystem::path(path).filename();
 	try {
-		if (std::filesystem::is_directory(path) && path != "/") {
+		if (std::filesystem::is_directory(path) && path != "/") { //append slash to show it's a directory
 			path += "/";
 			cut_down_path += "/";
 		}
