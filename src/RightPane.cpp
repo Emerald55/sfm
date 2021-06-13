@@ -27,7 +27,6 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 					if (files.size() > scr.get_term_height()) {
 						files.erase(files.begin() + scr.get_term_height(), files.end());
 					}
-				
 				}
 				if (FileIO::file_contents_printable(selected_filepath)) {
 					file_content = FileIO::get_file_contents(selected_filepath, scr.get_term_height());
