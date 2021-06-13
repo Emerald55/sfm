@@ -1,6 +1,5 @@
 #include <string>
 #include <vector>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
 #include <filesystem>
@@ -54,25 +53,20 @@ std::vector<std::string> FileIO::get_dir_files(const std::string &path, const Fl
 
 std::string FileIO::get_permbits(const std::string &current_filepath) {
 	struct stat st;
+	if (stat(current_filepath.c_str(), &st)) {
+		return " ? ";
+	}
+	const std::filesystem::perms fp = std::filesystem::status(current_filepath).permissions();
 	std::string file_perms = " ";
-	if (stat(current_filepath.c_str(), &st) == 0) {
-		mode_t perm = st.st_mode;
-		file_perms += (perm & S_IRUSR) ? 'r' : '-';
-		file_perms += (perm & S_IWUSR) ? 'w' : '-';
-		file_perms += (perm & S_IXUSR) ? 'x' : '-';
-		file_perms += (perm & S_IRGRP) ? 'r' : '-';
-		file_perms += (perm & S_IWGRP) ? 'w' : '-';
-		file_perms += (perm & S_IXGRP) ? 'x' : '-';
-		file_perms += (perm & S_IROTH) ? 'r' : '-';
-		file_perms += (perm & S_IWOTH) ? 'w' : '-';
-		file_perms += (perm & S_IXOTH) ? 'x' : '-';
-		stat(current_filepath.c_str(), &st);
-		struct passwd *pwd;
-		pwd = getpwuid(st.st_uid);
-		file_perms = file_perms + " " + pwd->pw_name + " ";
-	}
-	else {
-		file_perms = " ? ";
-	}
-	return file_perms;
+	file_perms += (fp & std::filesystem::perms::owner_read) != std::filesystem::perms::none ? 'r' : '-';
+	file_perms += (fp & std::filesystem::perms::owner_write) != std::filesystem::perms::none ? 'w' : '-';
+	file_perms += (fp & std::filesystem::perms::owner_exec) != std::filesystem::perms::none ? 'x' : '-';
+	file_perms += (fp & std::filesystem::perms::group_read) != std::filesystem::perms::none ? 'r' : '-';
+	file_perms += (fp & std::filesystem::perms::group_write) != std::filesystem::perms::none ? 'w' : '-';
+	file_perms += (fp & std::filesystem::perms::group_exec) != std::filesystem::perms::none ? 'x' : '-';
+	file_perms += (fp & std::filesystem::perms::others_read) != std::filesystem::perms::none ? 'r' : '-';
+	file_perms += (fp & std::filesystem::perms::others_write) != std::filesystem::perms::none ? 'w' : '-';
+	file_perms += (fp & std::filesystem::perms::others_exec) != std::filesystem::perms::none ? 'x' : '-';
+	const struct passwd *pwd = getpwuid(st.st_uid); //get file owner
+	return file_perms + " " + pwd->pw_name + " ";
 }
