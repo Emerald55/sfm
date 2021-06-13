@@ -38,7 +38,7 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 				else {
 					bool contents_printable = true;
 					for (const auto &line : file_content) {
-						if (line.find('\0') != std::string::npos) {
+						if (line.find('\0') != std::string::npos) { //if null byte assume binary file
 							contents_printable = false;
 							break;
 						}
