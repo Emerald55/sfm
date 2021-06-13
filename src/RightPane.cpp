@@ -27,22 +27,18 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 					if (files.size() > scr.get_term_height()) {
 						files.erase(files.begin() + scr.get_term_height(), files.end());
 					}
-				}
-				if (FileIO::file_contents_printable(selected_filepath)) {
-					file_content = FileIO::get_file_contents(selected_filepath, scr.get_term_height());
-				}
-				if (std::filesystem::is_directory(selected_filepath)) {
 					draw_window_files(scr, flags);
 				}
-				else {
-					bool contents_printable = true;
+				else if (std::filesystem::is_regular_file(selected_filepath)) {
+					file_content = FileIO::get_file_contents(selected_filepath, scr.get_term_height());
+					bool binary_file = false;
 					for (const auto &line : file_content) {
-						if (line.find('\0') != std::string::npos) { //if null byte assume binary file
-							contents_printable = false;
+						if (line.find('\0') != std::string::npos) { //if null byte found assume binary file
+							binary_file = true;
 							break;
 						}
 					}
-					draw_window_file_contents(contents_printable);
+					draw_window_file_contents(binary_file);
 				}
 			} catch (const std::filesystem::filesystem_error &) {} //no permission to read contents
 		}
@@ -52,8 +48,8 @@ void RightPane::update(const Screen &scr, const std::string &selected_filepath,
 	}
 }
 
-void RightPane::draw_window_file_contents(bool contents_printable) const {
-	if (!contents_printable) {
+void RightPane::draw_window_file_contents(bool binary_file) const {
+	if (binary_file) {
 		wattron(pane, COLOR_PAIR(5));
 		mvwaddnstr(pane, 1, 1, "*** Binary contents unprintable ***", width - 2);
 		wattroff(pane, COLOR_PAIR(5));
