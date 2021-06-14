@@ -5,13 +5,13 @@
 
 Screen::Screen() {
 	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_RED); //cursor
-	init_pair(2, COLOR_YELLOW, COLOR_BLACK); //directories
-	init_pair(3, COLOR_CYAN, COLOR_BLACK); //line numbers
-	init_pair(4, COLOR_GREEN, COLOR_BLACK); //green input box
-	init_pair(5, COLOR_RED, COLOR_BLACK); //red input box and unprintable warning
-	init_pair(6, COLOR_YELLOW, COLOR_RED); //cursor on directory
-	init_pair(7, COLOR_WHITE, COLOR_MAGENTA); //unknown filetype
+	init_pair(1, COLOR_WHITE, COLOR_RED); //white fg red bg
+	init_pair(2, COLOR_YELLOW, COLOR_BLACK); //yellow fg black bg
+	init_pair(3, COLOR_CYAN, COLOR_BLACK); //cyan fg black bg
+	init_pair(4, COLOR_GREEN, COLOR_BLACK); //green fg black bg
+	init_pair(5, COLOR_RED, COLOR_BLACK); //red fg black bg
+	init_pair(6, COLOR_YELLOW, COLOR_RED); //yellow fg red bg
+	init_pair(7, COLOR_WHITE, COLOR_MAGENTA); //white fg magenta bg
 	cbreak();
 	noecho();
 	curs_set(0);

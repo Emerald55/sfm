@@ -9,7 +9,6 @@ struct FileIO {
 	static std::vector<std::string> get_dir_files(const std::string &path, const FlagParse &flags,
 			const std::string &search_str = "");
 	static std::string get_permbits(const std::string &current_filepath);
-	static bool file_contents_printable(const std::string &path);
 };
 
 #endif
