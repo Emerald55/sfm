@@ -28,16 +28,16 @@ void LeftPane::update(Screen &scr, bool draw_right_pane,
 	if (size != 0) {
 		const unsigned int current_line_number = (scr.get_page() - scr.get_term_height())
 		       	+ scr.get_curs_y() + 1;
-		if (size < current_line_number) { //if deleted last file on a page
+		if (size < current_line_number) { //if the last file on a page is deleted move to new last page
 			scr.set(std::nullopt, static_cast<unsigned int>(std::ceil(static_cast<double>(size)
 						/ static_cast<double>(scr.get_term_height()))) * scr.get_term_height());
 		}
 		const unsigned int page_floor = scr.get_page() - scr.get_term_height();
-		files.erase(files.begin(), files.begin() + page_floor); //trim before page
+		files.erase(files.begin(), files.begin() + page_floor); //trim before current page
 		if (size > scr.get_page()) {
-			files.erase(files.begin() + scr.get_page() - page_floor, files.end()); //trim after
+			files.erase(files.begin() + scr.get_page() - page_floor, files.end()); //trim after current page
 		}
-		if (size < current_line_number) { //if hovering over last file and its deleted
+		if (size < current_line_number) { //if hovering over last file and its deleted move cursor to new last file
 			scr.set(files.size() - 1, std::nullopt);
 		}
 		selected_filepath = files[scr.get_curs_y()];

@@ -23,29 +23,32 @@ void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool dra
 		std::string file = std::filesystem::path(files[i]).filename();
 		std::string num_format = std::to_string(i + scr.get_page() - height + 3) + ".";
 		if (!draw_curs) {
-			num_format = std::to_string(i + 1) + "."; //lets right pane draw proper numbers
+			num_format = std::to_string(i + 1) + "."; //lets right pane draw proper line numbers
 		}
 		wattron(pane, COLOR_PAIR(3));
-		mvwaddstr(pane, i + 1, 1, num_format.c_str());
+		mvwaddstr(pane, i + 1, 1, num_format.c_str()); //draw line number
 		wattroff(pane, COLOR_PAIR(3));
 		try {
-			if (i == scr.get_curs_y() && draw_curs && std::filesystem::is_directory(files[i])) { //highlight file where cursor is
-				wattron(pane, COLOR_PAIR(6));
+			if (i == scr.get_curs_y() && draw_curs && std::filesystem::is_directory(files[i])) {
+				wattron(pane, COLOR_PAIR(6)); //highlight directory file cursor is on
 			}
 			else if (i == scr.get_curs_y() && draw_curs) {
-				wattron(pane, COLOR_PAIR(1));
+				wattron(pane, COLOR_PAIR(1)); //hightlight file cursor is on
 			}
 			else if (std::filesystem::is_directory(files[i])) {
-				wattron(pane, COLOR_PAIR(2));
+				wattron(pane, COLOR_PAIR(2)); //show file is a directory
 			}
 		}
 		catch (const std::filesystem::filesystem_error &) {
 			if (i == scr.get_curs_y() && draw_curs) {
-				wattron(pane, COLOR_PAIR(7));
+				wattron(pane, COLOR_PAIR(7)); //highlight unknown file cursor is on
+			}
+			else {
+				wattron(pane, COLOR_PAIR(8)); //show file is unknown
 			}
 		}
 		try {
-			if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) {
+			if (flags.get_show_symbolic_links() && std::filesystem::is_symlink(files[i])) { //show symlink
 				file += " -> ";
 				file += std::filesystem::path(std::filesystem::read_symlink(files[i])).filename();
 			}
@@ -55,6 +58,7 @@ void Pane::draw_window_files(const Screen &scr, const FlagParse &flags, bool dra
 		wattroff(pane, COLOR_PAIR(2));
 		wattroff(pane, COLOR_PAIR(3));
 		wattroff(pane, COLOR_PAIR(7));
+		wattroff(pane, COLOR_PAIR(8));
 	}
 }
 
@@ -96,13 +100,13 @@ void Pane::draw_window_title(std::string path) const {
 		}
 	}
 	catch (const std::filesystem::filesystem_error &) {} //ignore failed is_directory()
-	if (path.size() < width - 2) {
+	if (path.size() < width - 2) { //entire path
 		mvwaddstr(pane, 0, width / 2 - (path.size() / 2), (" " + path + " ").c_str());
 	}
 	else if (cut_down_path.size() < width - 2) { //just display dir name/filename and not entire path
 		mvwaddstr(pane, 0, width / 2 - (cut_down_path.size() / 2), (" " + cut_down_path + " ").c_str());
 	}
-	else {
+	else { //path cant fit
 		mvwaddstr(pane, 0, width / 2, (" ... "));
 	}
 }
