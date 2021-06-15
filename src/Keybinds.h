@@ -7,8 +7,8 @@ class Keybinds {
 	public:
 		inline std::string get_search_str() const { return search_str; }
 		bool quit(const Screen &scr) const;
-		void move_left(Screen &scr);
-		void move_right(Screen &scr, const std::string &selected_filepath);
+		bool move_left(Screen &scr);
+		bool move_right(Screen &scr, const std::string &selected_filepath);
 		void move_up(Screen &scr) const;
 		void move_down(Screen &scr, size_t left_pane_size_currently, 
 				size_t left_pane_size) const;

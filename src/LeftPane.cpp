@@ -61,12 +61,12 @@ bool LeftPane::get_input(Screen &scr, RightPane &rp) {
 		case 'a':
 		case 'h':
 		case KEY_LEFT:
-			kb.move_left(scr);
+			searching = kb.move_left(scr);
 			break;
 		case 'd':
 		case 'l':
 		case KEY_RIGHT:
-			kb.move_right(scr, selected_filepath);
+			searching = kb.move_right(scr, selected_filepath);
 			break;
 		case 's':
 		case 'j':

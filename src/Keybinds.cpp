@@ -17,15 +17,17 @@ bool Keybinds::quit(const Screen &scr) const {
 	return true;
 }
 
-void Keybinds::move_left(Screen &scr) {
-	scr.reset_to_first_page();
-	search_str = "";
+bool Keybinds::move_left(Screen &scr) {
 	if (chdir("..") == -1) {
 		Input::alert_box(" Error going back ", 750, 5, scr);
+		return !search_str.empty();
 	}
+	scr.reset_to_first_page();
+	search_str = "";
+	return false;
 }
 
-void Keybinds::move_right(Screen &scr,
+bool Keybinds::move_right(Screen &scr,
 	       	const std::string &selected_filepath) {
 	try {
 		if (std::filesystem::is_directory(selected_filepath)) {
@@ -35,12 +37,14 @@ void Keybinds::move_right(Screen &scr,
 			else {
 				scr.reset_to_first_page();
 				search_str = "";
+				return false;
 			}
 		}
 	}
 	catch (const std::filesystem::filesystem_error &) {
 		Input::alert_box(" Invalid Permission ", 750, 5, scr);
 	}
+	return !search_str.empty();
 }
 
 void Keybinds::move_up(Screen &scr) const {
