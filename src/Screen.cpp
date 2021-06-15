@@ -11,7 +11,8 @@ Screen::Screen() {
 	init_pair(4, COLOR_GREEN, COLOR_BLACK); //green fg black bg
 	init_pair(5, COLOR_RED, COLOR_BLACK); //red fg black bg
 	init_pair(6, COLOR_YELLOW, COLOR_RED); //yellow fg red bg
-	init_pair(7, COLOR_WHITE, COLOR_MAGENTA); //white fg magenta bg
+	init_pair(7, COLOR_MAGENTA, COLOR_RED); //magenta fg red bg
+	init_pair(8, COLOR_MAGENTA, COLOR_BLACK); //magenta fg black bg
 	cbreak();
 	noecho();
 	curs_set(0);
@@ -55,10 +56,10 @@ void Screen::reset_to_first_page() {
 }
 
 void Screen::set(std::optional<unsigned int> curs_y, std::optional<unsigned int> page) {
-	if (page) {
-		this->page = page.value();
-	}
 	if (curs_y) {
 		this->curs_y = curs_y.value();
+	}
+	if (page) {
+		this->page = page.value();
 	}
 }

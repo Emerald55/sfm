@@ -37,8 +37,7 @@ bool FlagParse::parse_flags(int argc, char* argv[]) {
 				std::cout << "	-p --path /start/path  Path to start program from\n";
 				return false;
 			case 'p':
-				errno = chdir(optarg);
-				if (errno == -1) {
+				if (chdir(optarg) == -1) {
 					std::cerr << "Could not find and/or enter directory, exiting...\n";
 					return false;
 				}
